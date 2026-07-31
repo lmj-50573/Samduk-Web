@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="detailBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5F5F3"/>
+      <stop offset="100%" stop-color="#E5E5E2"/>
+    </linearGradient>
+    <linearGradient id="oliveLeatherD" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#838873"/>
+      <stop offset="50%" stop-color="#6B705C"/>
+      <stop offset="100%" stop-color="#515545"/>
+    </linearGradient>
+    <linearGradient id="tpuAmberD" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#E29548"/>
+      <stop offset="50%" stop-color="#F3C37A"/>
+      <stop offset="100%" stop-color="#B86C23"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#detailBg)"/>
+  <ellipse cx="400" cy="460" rx="280" ry="32" fill="#B2B6A6" opacity="0.4"/>
+
+  <!-- Boot Lateral Profile Detail View -->
+  <g transform="translate(100, 80)">
+    <!-- Sole -->
+    <path d="M 80 400 C 180 430, 380 430, 580 370 L 575 330 C 380 380, 180 370, 85 340 Z" fill="#3B3F32"/>
+    <path d="M 85 340 C 180 370, 380 380, 575 330 L 570 300 C 380 340, 180 330, 90 290 Z" fill="#7C816E"/>
+    
+    <!-- TPU Heel Cushion Detail -->
+    <path d="M 450 330 C 500 315, 550 295, 570 295 L 565 325 C 540 340, 490 355, 450 330 Z" fill="url(#tpuAmberD)"/>
+
+    <!-- Upper -->
+    <path d="M 90 290 C 70 230, 100 160, 200 140 C 280 120, 380 70, 460 80 C 520 90, 560 200, 570 300 Z" fill="url(#oliveLeatherD)"/>
+
+    <!-- Mesh Side Panel -->
+    <path d="M 230 180 C 280 160, 380 150, 430 180 C 450 230, 410 280, 310 290 C 230 280, 210 230, 230 180 Z" fill="#3D4133"/>
+
+    <!-- Toe Cap with K2 -->
+    <path d="M 90 290 C 70 230, 100 190, 160 180 C 150 220, 130 270, 90 290 Z" fill="#525646"/>
+    <text x="110" y="260" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="#FFFFFF">K2</text>
+
+    <!-- Dual BOA Dials -->
+    <g transform="translate(370, 100)">
+      <circle cx="20" cy="20" r="22" fill="#2E3126"/>
+      <circle cx="20" cy="20" r="18" fill="#525646" stroke="#888C7B" stroke-width="2"/>
+      <circle cx="20" cy="20" r="12" fill="#23261C"/>
+      <text x="20" y="24" font-family="Arial, sans-serif" font-weight="900" font-size="9" fill="#FFFFFF" text-anchor="middle">BOA</text>
+    </g>
+
+    <g transform="translate(440, 170)">
+      <circle cx="20" cy="20" r="22" fill="#2E3126"/>
+      <circle cx="20" cy="20" r="18" fill="#525646" stroke="#888C7B" stroke-width="2"/>
+      <circle cx="20" cy="20" r="12" fill="#23261C"/>
+      <text x="20" y="24" font-family="Arial, sans-serif" font-weight="900" font-size="9" fill="#FFFFFF" text-anchor="middle">BOA</text>
+    </g>
+
+    <!-- GORE-TEX Tag -->
+    <g transform="translate(490, 130) rotate(20)">
+      <rect x="0" y="0" width="40" height="15" rx="3" fill="#282A21" stroke="#A8A888" stroke-width="1"/>
+      <text x="20" y="11" font-family="Arial, sans-serif" font-weight="800" font-size="8" fill="#E2B155" text-anchor="middle">GORE-TEX</text>
+    </g>
+  </g>
+</svg>

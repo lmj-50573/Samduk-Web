@@ -1,0 +1,6 @@
+{
+  "name": "SAMDUK Footwear Platform",
+  "description": "Premium footwear manufacturer shopping platform and editorial curation for SAMDUK brands",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F8F8F8"/>
+      <stop offset="100%" stop-color="#EBEBEB"/>
+    </linearGradient>
+
+    <!-- Olive Leather Gradient -->
+    <linearGradient id="oliveLeather" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#838873"/>
+      <stop offset="50%" stop-color="#6B705C"/>
+      <stop offset="100%" stop-color="#515545"/>
+    </linearGradient>
+
+    <!-- TPU Amber Heel Cushion Gradient -->
+    <linearGradient id="tpuAmber" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#E29548" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#F3C37A" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#B86C23" stop-opacity="0.90"/>
+    </linearGradient>
+
+    <!-- Rubber Outsole -->
+    <linearGradient id="rubberOutsole" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4A4E3D"/>
+      <stop offset="50%" stop-color="#5A5E4D"/>
+      <stop offset="100%" stop-color="#3D4032"/>
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+      <feOffset dx="0" dy="18"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Clean Off-White Background -->
+  <rect width="800" height="600" fill="url(#bgGrad)"/>
+  
+  <!-- Soft Contact Shadow -->
+  <ellipse cx="400" cy="460" rx="310" ry="38" fill="#B2B6A6" opacity="0.45"/>
+  <ellipse cx="380" cy="455" rx="240" ry="22" fill="#888C7D" opacity="0.4"/>
+
+  <!-- Left Boot (Background Angle) -->
+  <g transform="translate(110, 120) scale(0.85) rotate(-5)" opacity="0.95">
+    <!-- Outsole -->
+    <path d="M 120 370 C 120 370, 180 405, 300 405 C 420 405, 500 355, 500 355 L 490 330 L 125 345 Z" fill="#3D4032"/>
+    <path d="M 125 345 C 125 345, 190 380, 300 380 C 410 380, 490 335, 490 335 L 485 295 L 120 325 Z" fill="#757A66"/>
+    <!-- Boot Body Olive -->
+    <path d="M 120 325 C 105 270, 130 180, 240 140 C 290 120, 340 100, 390 110 C 440 125, 480 210, 485 295 C 410 335, 290 335, 120 325 Z" fill="url(#oliveLeather)"/>
+    <!-- Collar -->
+    <path d="M 330 115 C 350 85, 410 95, 435 145 Z" fill="#424638"/>
+  </g>
+
+  <!-- Right Boot (Foreground Primary - Matching Uploaded Photo) -->
+  <g transform="translate(130, 70)" filter="url(#dropShadow)">
+    <!-- Outsole Base (Olive-Grey Heavy Duty Rubber) -->
+    <path d="M 110 435 C 130 455, 240 480, 370 475 C 490 470, 555 405, 555 405 L 550 380 C 550 380, 470 440, 360 445 C 240 448, 120 415, 120 415 Z" fill="#3B3F32"/>
+    
+    <!-- Outsole Grip Lugs Tread -->
+    <path d="M 115 438 L 130 450 L 150 452 L 140 435 Z" fill="#2E3126"/>
+    <path d="M 170 455 L 190 463 L 210 464 L 200 442 Z" fill="#2E3126"/>
+    <path d="M 230 466 L 260 472 L 290 473 L 280 446 Z" fill="#2E3126"/>
+    <path d="M 320 473 L 360 474 L 400 470 L 390 445 Z" fill="#2E3126"/>
+
+    <!-- Midsole Tough Shield Layer (Warm Grey) -->
+    <path d="M 110 415 C 120 415, 220 452, 360 448 C 470 442, 550 380, 550 380 L 545 340 C 545 340, 460 398, 350 402 C 220 405, 125 365, 125 365 Z" fill="#7C816E"/>
+
+    <!-- TPU Transparent Amber Heel Cushioning Unit (Rear Cushion Insert) -->
+    <path d="M 430 380 C 470 360, 520 340, 545 340 L 540 375 C 515 390, 470 415, 430 400 Z" fill="url(#tpuAmber)"/>
+    <path d="M 445 382 C 475 368, 510 352, 532 352 L 530 368 C 510 380, 475 392, 445 382 Z" fill="#FFF" opacity="0.3"/>
+
+    <!-- Upper Main Body (High-Cut Olive/Khaki Nubuck & Ripstop Mesh) -->
+    <path d="M 120 365 C 100 300, 130 200, 240 180 C 310 160, 360 90, 430 100 C 480 110, 530 230, 545 340 C 460 398, 350 402, 120 365 Z" fill="url(#oliveLeather)"/>
+
+    <!-- Dark Charcoal Textured Mesh Side Panel -->
+    <path d="M 250 220 C 300 200, 380 180, 420 220 C 440 260, 400 320, 320 340 C 260 330, 230 280, 250 220 Z" fill="#3D4133" stroke="#5A5E4D" stroke-width="2"/>
+    <path d="M 270 235 L 390 235 M 265 255 L 400 255 M 260 275 L 395 275 M 270 295 L 370 295" stroke="#525646" stroke-width="2" stroke-dasharray="4 3"/>
+
+    <!-- Protective Reinforced Rubber Toe Guard -->
+    <path d="M 120 365 C 100 300, 130 240, 200 230 C 195 265, 175 325, 120 365 Z" fill="#525646"/>
+    <!-- Printed K2 Logo on Toe Cap (White) -->
+    <text x="148" y="348" font-family="Arial, sans-serif" font-weight="900" font-size="17" fill="#FFFFFF" letter-spacing="0.8">K2</text>
+
+    <!-- High Ankle Padded Collar (Dark Charcoal / Khaki Padding) -->
+    <path d="M 390 105 C 410 70, 480 80, 510 145 C 500 165, 450 160, 405 130 Z" fill="#33362A"/>
+    <path d="M 405 112 C 420 85, 470 95, 495 145" stroke="#636856" stroke-width="4" fill="none"/>
+
+    <!-- Front Tongue & Lace Gusset Area -->
+    <path d="M 270 200 C 310 180, 360 140, 405 120 L 380 155 C 345 180, 300 215, 270 200 Z" fill="#4B4E40"/>
+
+    <!-- DUAL BOA® DIAL SYSTEM -->
+    <!-- 1) Top Tongue BOA Dial (Primary) -->
+    <g transform="translate(355, 120)">
+      <circle cx="16" cy="16" r="18" fill="#2E3126"/>
+      <circle cx="16" cy="16" r="15" fill="#525646" stroke="#888C7B" stroke-width="2"/>
+      <circle cx="16" cy="16" r="10" fill="#23261C"/>
+      <text x="16" y="19" font-family="Arial, sans-serif" font-weight="900" font-size="7" fill="#FFFFFF" text-anchor="middle">BOA</text>
+    </g>
+
+    <!-- 2) Lateral Side Ankle BOA Dial (Secondary) -->
+    <g transform="translate(425, 195)">
+      <circle cx="16" cy="16" r="18" fill="#2E3126"/>
+      <circle cx="16" cy="16" r="15" fill="#525646" stroke="#888C7B" stroke-width="2"/>
+      <circle cx="16" cy="16" r="10" fill="#23261C"/>
+      <text x="16" y="19" font-family="Arial, sans-serif" font-weight="900" font-size="7" fill="#FFFFFF" text-anchor="middle">BOA</text>
+    </g>
+
+    <!-- Stainless Steel Lacing Cables -->
+    <path d="M 235 240 L 360 132 M 255 260 L 365 138 M 280 280 L 370 142" stroke="#B0B4A4" stroke-width="2.5" fill="none"/>
+    <path d="M 370 205 L 435 208 M 380 225 L 430 215" stroke="#B0B4A4" stroke-width="2" fill="none"/>
+
+    <!-- Lacing Eyelet Loops -->
+    <rect x="230" y="232" width="12" height="7" rx="2" fill="#33362A" transform="rotate(-20 230 232)"/>
+    <rect x="250" y="252" width="12" height="7" rx="2" fill="#33362A" transform="rotate(-20 250 252)"/>
+    <rect x="275" y="272" width="12" height="7" rx="2" fill="#33362A" transform="rotate(-20 275 272)"/>
+
+    <!-- GORE-TEX Gold/Silver Badge on Ankle -->
+    <g transform="translate(470, 160) rotate(25)">
+      <rect x="0" y="0" width="32" height="12" rx="2" fill="#282A21" stroke="#A8A888" stroke-width="1"/>
+      <text x="16" y="9" font-family="Arial, sans-serif" font-weight="800" font-size="7" fill="#E2B155" text-anchor="middle">GORE-TEX</text>
+    </g>
+  </g>
+</svg>
