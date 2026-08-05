@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavSection, BrandId } from '../../types';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HeroBannerProps {
   onNavigate: (section: NavSection) => void;
@@ -33,7 +33,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       titleEnMain: 'ENGINEERED QUALITY',
       titleEnSub: 'ZERO COMPROMISE.',
       subtitle: '28년간 축적된 삼덕통상의 첨단 스마트 제화 기술과 BOA® 이중 다이얼 조임 시스템, GORE-TEX® 360도 방수 공법.\n산업 현장의 극심한 충격과 악천후 속에서도 온몸을 완벽하게 보호합니다.',
-      image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=1920&q=80',
+      image: '/main1.png',
       brandId: 'K2_SAFETY',
       ctaText: '안전화 카탈로그 보기',
       ctaSection: 'SHOP',
@@ -45,7 +45,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       titleEnMain: 'ENGINEERED QUALITY',
       titleEnSub: 'ZERO COMPROMISE.',
       subtitle: 'X-Grip 고마찰 미끄럼 방지 아웃솔과 초경량 경희 방검 패널.\n삼덕통상 부산 및 베트남 스마트 팩토리에서 100% 정밀 생산되는 특수 기술력.',
-      image: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=1920&q=80',
+      image: '/main2.png',
       brandId: 'K2_SAFETY',
       ctaText: '삼덕통상 제조 제품 보기',
       ctaSection: 'SHOP',
@@ -57,7 +57,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       titleEnMain: 'ENGINEERED QUALITY',
       titleEnSub: 'ZERO COMPROMISE.',
       subtitle: 'K2 Safety, 아이더(EIDER), 블랙야크 등 글로벌 브랜드 전문 제조기업.\n연간 5,000,000족 생산 거점의 혁신적 안전화 및 아웃도어 풋웨어 플랫폼.',
-      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1920&q=80',
+      image: '/main3.png',
       brandId: 'K2_SAFETY',
       ctaText: '삼덕통상 시그니처 카탈로그',
       ctaSection: 'SHOP',
@@ -91,27 +91,13 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
       {/* Hero content area */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-between py-10 sm:py-14">
-        {/* Top Pagination controls */}
-        <div className="flex items-center justify-end w-full">
-          <div className="flex items-center space-x-2">
-            {slides.map((s, idx) => (
-              <button
-                key={s.id}
-                onClick={() => setActiveSlide(idx)}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  activeSlide === idx ? 'w-8 bg-blue-500' : 'w-2 bg-white/30 hover:bg-white/60'
-                }`}
-                title={`슬라이드 ${idx + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+              
 
         {/* Center headlines & buttons */}
         <div className="max-w-3xl space-y-5 my-auto pl-1 sm:pl-3">
           <div className="inline-flex items-center space-x-2 text-blue-400 font-mono text-xs tracking-widest uppercase font-bold">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span>SAMDUK TRADING CO., LTD.</span>
+            
+            
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.08] uppercase text-white">
@@ -155,7 +141,26 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
+              </div>
+              {/* Bottom Pagination controls */}
+              <div className="flex items-center justify-end w-full">
+                  <div className="flex items-center space-x-3">
+                      <button
+                          onClick={() => setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+                          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/25 backdrop-blur-md transition-colors cursor-pointer border border-white/20"
+                          title="이전 슬라이드"
+                      >
+                          <ChevronLeft className="w-5 h-5 text-white" />
+                      </button>
+                      <button
+                          onClick={() => setActiveSlide((prev) => (prev + 1) % slides.length)}
+                          className="w-10 h-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/25 backdrop-blur-md transition-colors cursor-pointer border border-white/20"
+                          title="다음 슬라이드"
+                      >
+                          <ChevronRight className="w-5 h-5 text-white" />
+                      </button>
+                  </div>
+              </div>
       </div>
     </section>
   );

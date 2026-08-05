@@ -34,10 +34,7 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
-            <div className="inline-flex items-center space-x-1.5 text-xs font-mono font-bold tracking-widest text-blue-600 uppercase mb-2">
-              <Award className="w-3.5 h-3.5" />
-              <span>05 · RECOMMENDED COLLECTION</span>
-            </div>
+            
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
               BEST COLLECTION
             </h2>

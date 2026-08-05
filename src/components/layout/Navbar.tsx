@@ -81,12 +81,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center space-x-2.5 text-left group cursor-pointer focus:outline-none"
           >
             <div className="w-9 h-9 bg-neutral-900 text-white flex items-center justify-center font-black text-lg tracking-tighter rounded-sm group-hover:bg-blue-600 transition-colors">
-              S
+              W
             </div>
             <div>
-              <div className="text-xl font-black tracking-tighter text-neutral-900 flex items-center">
-                SAMDUK <span className="text-blue-600 ml-1">FOOTWEAR</span>
-              </div>
+               <div className="text-xl font-black tracking-normal text-neutral-900 flex items-center">
+                    WANT<span className="group-hover:text-blue-600 transition-colors">U</span>
+               </div>
               <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold -mt-0.5">
                 안전화 제조기업
               </div>

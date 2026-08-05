@@ -19,9 +19,7 @@ export const FactoryStory: React.FC<FactoryStoryProps> = ({
         {/* Section Title */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-blue-600 uppercase block mb-2">
-              08 · SMART MANUFACTURING EXCELLENCE
-            </span>
+
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
               FACTORY STORY
             </h2>

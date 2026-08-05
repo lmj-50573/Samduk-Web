@@ -16,7 +16,10 @@ export default defineConfig(() => {
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+        // .vs 폴더(Visual Studio 내부 파일)는 감시 대상에서 제외 - 파일 잠금 충돌 방지
+        watch: process.env.DISABLE_HMR === 'true' ? null : {
+            ignored: ['**/.vs/**', '**/node_modules/**', '**/public/**'],
+        },
     },
   };
 });

@@ -96,11 +96,11 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isFeatured: true,
     rating: 4.9,
     reviewCount: 428,
-    image: '/k2_olive_boa_boot.svg',
-    gallery: [
-      '/k2_olive_boa_boot.svg',
+    image: '/k2_safety_boa_gtx.jpg',
+        gallery: [
+      '/k2_safety_boa_gtx.jpg',
       '/k2_olive_boa_boot_detail.svg',
-      '/k2_olive_boa_boot.svg'
+      '/k2_safety_boa_gtx.jpg'
     ],
     shortDescription: '올리브 카키 갑피와 설포·측면 이중 BOA® 다이얼 조임 시스템, 투명 TPU 충격 흡수 힐 패널이 결합된 삼덕통상 대표 K2 SAFETY 프리미엄 고어텍스 중컷 안전화.',
     specs: {
@@ -281,9 +281,9 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isFeatured: true,
     rating: 4.9,
     reviewCount: 610,
-    image: '/k2_olive_boa_boot.svg',
+    image: '/k2_safety_boa_gtx2.jpg',
     gallery: [
-      '/k2_olive_boa_boot.svg',
+      '/k2_safety_boa_gtx2.jpg',
       '/k2_olive_boa_boot_detail.svg'
     ],
     shortDescription: '도시 현장 및 경작업자들을 위한 스포티한 초경량 안전 로우 슈즈.',
