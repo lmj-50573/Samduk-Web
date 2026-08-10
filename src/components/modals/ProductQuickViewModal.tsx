@@ -44,15 +44,19 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
         </button>
 
         {/* Left Gallery Image (5 cols) */}
-        <div className="w-full md:w-1/2 bg-neutral-100 p-6 flex flex-col justify-between relative select-none">
+              <div className="w-full md:w-1/2 bg-neutral-100 p-6 flex flex-col relative select-none">
           {/* Main big image */}
-          <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-neutral-200 mb-4 flex items-center justify-center">
-            <img
-              src={product.gallery[selectedImageIdx] || product.image}
-              alt={product.name}
-              referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center"
-            />
+          <div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-neutral-200 mb-2 flex items-center justify-center">
+                      <img
+                          src={
+                              (product.colorVariants?.find(v => v.name === selectedColor)?.gallery[selectedImageIdx])
+                              || product.gallery[selectedImageIdx]
+                              || product.image
+                          }
+                          alt={product.name}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover object-center"
+                      />
 
             <div className="absolute top-3 left-3 flex gap-1.5">
               {product.isNew && (
@@ -67,26 +71,44 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
               )}
             </div>
           </div>
-
+                  {/* Color Swatch */}
+                  {product.colorVariants && product.colorVariants.length > 0 && (
+                      <div className="flex items-center gap-2 mt-2">
+                          {product.colorVariants.map((variant, i) => (
+                              <button
+                                  key={variant.name}
+                                  onClick={() => {
+                                      setSelectedColor(variant.name);
+                                      setSelectedImageIdx(0);
+                                  }}
+                                  className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold uppercase transition-all cursor-pointer ${selectedColor === variant.name
+                                          ? 'border-blue-600 bg-blue-50 text-blue-600'
+                                          : 'border-neutral-200 text-neutral-600 hover:border-neutral-400'
+                                      }`}
+                              >
+                                  {variant.name}
+                              </button>
+                          ))}
+                      </div>
+                  )}
           {/* Thumbnail strip */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {product.gallery.map((imgUrl, i) => (
-              <button
-                key={i}
-                onClick={() => setSelectedImageIdx(i)}
-                className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer shrink-0 ${
-                  selectedImageIdx === i ? 'border-blue-600 scale-95' : 'border-transparent opacity-60 hover:opacity-100'
-                }`}
-              >
-                <img src={imgUrl} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
-              </button>
-            ))}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 mt-2">
+                      {(product.colorVariants?.find(v => v.name === selectedColor)?.gallery || product.gallery).map((imgUrl, i) => (
+                          <button
+                              key={i}
+                              onClick={() => setSelectedImageIdx(i)}
+                              className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer shrink-0 ${selectedImageIdx === i ? 'border-blue-600 scale-95' : 'border-transparent opacity-60 hover:opacity-100'
+                                  }`}
+                          >
+                              <img src={imgUrl} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                          </button>
+                      ))}
           </div>
 
           {/* Quality badge bottom */}
-          <div className="mt-4 pt-3 border-t border-neutral-200/80 flex items-center justify-between text-[11px] font-mono text-neutral-500">
-            <span>SAMDUK ENGINEERED</span>
-            <span className="text-blue-600 font-bold">GORE-TEX & BOA PARTNER</span>
+                  <div className="mt-auto pt-3 border-t border-neutral-200/80 flex items-center justify-between text-[11px] font-mono text-neutral-500">
+            <span>SAMDUK</span>
+            <span className="text-blue-600 font-bold">GORE-TEX</span>
           </div>
         </div>
 

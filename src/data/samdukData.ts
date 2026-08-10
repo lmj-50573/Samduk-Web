@@ -112,7 +112,11 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
       closureSystem: 'BOA® Fit System - 다이얼 조작으로 간편한 착탈, 최적의 착화감'
     },
     technologies: ['GORE-TEX', 'BOA', 'K-SAFETY', 'ORTHOLITE'],
-    colors: ['Olive Khaki / Charcoal / Amber TPU'],
+        colors: ['Olive Khaki / Charcoal / Amber TPU'],
+        colorVariants: [
+            { name: 'Navy', image: '/k2_safety_boa_gtx.jpg', gallery: ['/k2_safety_boa_gtx.jpg', '/k2_safety_boa_gtx1-1.jpg'] },
+            { name: 'Charcoal', image: '/k2_safety_boa_gtx2.jpg', gallery: ['/k2_safety_boa_gtx2.jpg', '/k2_safety_boa_gtx1-1.jpg'] },
+        ],
     sizes: [245, 250, 255, 260, 265, 270, 275, 280, 285, 290],
         officialStoreUrl: 'https://www.k-village.co.kr/goods/SC424020N4'
   },
@@ -312,10 +316,9 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: true,
     rating: 4.8,
     reviewCount: 342,
-    image: '/k2_olive_boa_boot.svg',
+    image: '/sample.png',
     gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+      '/sample.png'
     ],
     shortDescription: '비 오는 산길과 악천후 속에서도 발을 쾌적하게 지켜주는 블랙야크 고어텍스 워킹화.',
     specs: {
@@ -420,7 +423,39 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     colors: ['Olive Khaki / Charcoal'],
     sizes: [230, 240, 250, 260, 270, 280, 290],
     officialStoreUrl: 'https://www.eider.co.kr'
-  },
+    },
+    {
+        id: 'k2-safety-120na',
+        name: 'K2 SAFETY K2-120NA NAVY',
+        nameKo: '초경량 방수 절연안전화',
+        brand: 'K2_SAFETY',
+        category: 'Safety',
+        price: 116000,
+        originalPrice: 116000,
+        isNew: true,
+        isBest: false,
+        isFeatured: true,
+        rating: 0,
+        reviewCount: 0,
+        image: '/k2_120na.jpg',
+        gallery: [
+            '/k2_120na.jpg',
+            '/k2_120na-1.jpg',
+        ],
+        shortDescription: '520g 초경량 설계로 작업 시 발의 부담을 줄이고, 방수·투습 기능과 14,000V 절연 성능으로 사계절 안전한 작업 환경을 제공합니다.',
+        specs: {
+            upper: '코팅 소가죽 + 합성피혁 - 뛰어난 내구성과 오염 방지 성능(방오성)',
+            sole: '논슬립 세제 2등급 아웃솔 - 미끄러짐 사고 예방',
+            weight: '520g (265mm, 0.5PRS 기준)',
+            safetyStandard: '컴포짓 토캡(비금속) + 아머플렉스 슬림 내답판 / 14,000V 절연 안전화 / 스카이폼 인솔(충격흡수·복원력)',
+            waterproof: true,
+            closureSystem: 'BOA® Fit System - 다이얼 조작으로 간편한 착탈, 최적의 착화감',
+        },
+        technologies: ['BOA', 'K-SAFETY'],
+        colors: ['Navy'],
+        sizes: [230, 235, 240, 245, 250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300],
+        officialStoreUrl: 'https://www.k-village.co.kr/goods/SC625021N4',
+    },
   {
     id: 'stelth-c3-esd-cleanroom',
     name: 'K2 SAFETY C3 ESD CLEANROOM SHOES',
@@ -433,10 +468,9 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: false,
     rating: 4.7,
     reviewCount: 140,
-    image: '/k2_olive_boa_boot.svg',
+      image: '/sample.png',
     gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+        '/sample.png'
     ],
     shortDescription: '반도체 및 정밀 바이오 공정을 위해 완벽한 정전기 방지(ESD)와 먼지 억제 설계를 갖춘 첨단 작업 슈즈.',
     specs: {

@@ -64,8 +64,13 @@ export interface ShoeProduct {
     closureSystem: string; // e.g. "BOA® Fit System" or "Quick-Lace"
   };
   technologies: ('GORE-TEX' | 'BOA' | 'VIBRAM' | 'K-SAFETY' | 'ORTHOLITE' | 'CARBON-PLATE' | 'CUSTOM-CRAFT')[];
-  colors: string[];
-  sizes: number[];
+    colors: string[];
+    colorVariants?: {
+        name: string;
+        image: string;
+        gallery: string[];
+    }[];
+    sizes: number[];
   officialStoreUrl: string;
 }
 

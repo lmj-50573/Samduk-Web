@@ -120,6 +120,23 @@ export default function App() {
       // ignore
     }
   }, [customPhotos]);
+    // 브라우저 뒤로가기/앞으로가기 버튼 클릭 시 이전 섹션으로 복원
+    useEffect(() => {
+        const handlePopState = (event: PopStateEvent) => {
+            if (event.state && event.state.section) {
+                setActiveSection(event.state.section);
+            } else {
+                setActiveSection('HOME');
+            }
+            window.scrollTo(0, 0);
+        };
+
+        // 최초 진입 시 현재 섹션을 히스토리에 기록해둠 (첫 뒤로가기가 바로 사이트 밖으로 안 나가게)
+        window.history.replaceState({ section: activeSection }, '', `#${activeSection.toLowerCase()}`);
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
 
   // Modal States
   const [quickViewProduct, setQuickViewProduct] = useState<ShoeProduct | null>(null);
@@ -137,10 +154,12 @@ export default function App() {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
 
   // Scroll to top when section changes
-  const handleNavigate = (section: NavSection) => {
-    setActiveSection(section);
-    window.scrollTo(0, 0);
-  };
+    // 페이지 섹션 전환 + 브라우저 히스토리에 기록 추가 (뒤로가기 대응)
+    const handleNavigate = (section: NavSection) => {
+        setActiveSection(section);
+        window.scrollTo(0, 0);
+        window.history.pushState({ section }, '', `#${section.toLowerCase()}`);
+    };
 
   const handleSelectBrandFilter = (brand: BrandId | 'ALL') => {
     setSelectedBrandFilter(brand);

@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7">
             <span className="font-mono text-xs text-blue-500 uppercase tracking-widest block mb-2 font-bold">
-            WANTU · OFFICIAL BRAND PLATFORM
+            
             </span>
             <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight uppercase">
              FIND YOUR NEXT PAIR.
@@ -82,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({
             {subscribed ? (
               <div className="p-4 bg-blue-900/40 border border-blue-500/40 rounded-xl flex items-center space-x-3 text-blue-300 text-xs">
                 <Check className="w-5 h-5 text-blue-400 shrink-0" />
-                <span>카탈로그 및 뉴스레터 구독 신청이 Formspree를 통해 접수되었습니다.</span>
+                <span>카탈로그 및 뉴스레터 구독 신청이 접수되었습니다.</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
@@ -245,19 +245,19 @@ export const Footer: React.FC<FooterProps> = ({
               <MapPin className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <span className="text-neutral-300 font-bold block">삼덕통상 (주)</span>
-                <span>부산광역시 강서구 낙동남로511번길 11 국제산업물류단지</span>
+                <span>부산광역시 강서구 낙동남로511번길 11 <br />국제산업물류단지</span>
               </div>
             </div>
             <div className="flex items-start space-x-2">
               <Globe className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
                 <span className="text-neutral-300 font-bold block">베트남 공장</span>
-                <span>베트남 타이닌성 호아빈 공단 7번길 롯트 F2</span>
+                <span>베트남 타이닌성 <br />호아빈 공단 7번길 롯트 F2</span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               <Phone className="w-4 h-4 text-blue-500 shrink-0" />
-              <span>+82 051-831-4631 (대표전화)</span>
+              <span>051-831-4631 (대표전화)</span>
             </div>
             <div className="flex items-center space-x-2">
               <Mail className="w-4 h-4 text-blue-500 shrink-0" />
@@ -271,11 +271,11 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="border-t border-neutral-900 bg-neutral-950/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500">
           <div>
-            삼덕통상(주) | 대표이사: 문창섭 | 사업자등록번호: 605-81-34892
+            삼덕통상(주) | 대표이사: 문창섭 | 
             <span className="hidden md:inline"> </span>
           </div>
           <div className="mt-2 sm:mt-0 font-mono">
-                 © {new Date().getFullYear()} Copyright(c) 2011 SAMDUK TONGSANG Co. Ltd. All rights reserved.
+                 © {new Date().getFullYear()} Copyright(c) 2026 SAMDUK TONGSANG Co. Ltd. All rights reserved.
           </div>
         </div>
       </div>
