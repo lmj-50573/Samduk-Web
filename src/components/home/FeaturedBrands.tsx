@@ -36,8 +36,8 @@ export const FeaturedBrands: React.FC<FeaturedBrandsProps> = ({
               FEATURED BRANDS
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base mt-2 max-w-2xl">
-              독보적인 제화 엔지니어링과 엄격한 품질 보증으로 세계적 신뢰를 구축해온 3대 정밀 브랜드.<br />
-              최첨단 안전 기술과 아웃도어 퍼포먼스가 집약된 공식 제품 라인업을 경험해 보세요.
+                          작업화 한 켤레에는 현장의 안전을, 등산화 한 켤레에는 새로운 도전을 담았습니다.<br/>
+                          한 켤레의 신발에 기술과 신뢰, 그리고 오랜 경험을 담아온 대표 브랜드를 만나보세요.
             </p>
           </div>
 
@@ -75,9 +75,7 @@ export const FeaturedBrands: React.FC<FeaturedBrandsProps> = ({
                       {brand.name}
                     </span>
                   </div>
-                  <span className="font-mono text-xs text-neutral-300 bg-neutral-950/60 px-2.5 py-1 rounded">
-                    EST. {brand.foundedYear}
-                  </span>
+
                 </div>
 
                 {/* Brand Name Title */}

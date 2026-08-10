@@ -139,7 +139,7 @@ export default function App() {
   // Scroll to top when section changes
   const handleNavigate = (section: NavSection) => {
     setActiveSection(section);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   };
 
   const handleSelectBrandFilter = (brand: BrandId | 'ALL') => {
@@ -172,7 +172,9 @@ export default function App() {
             onNavigate={handleNavigate}
             onSelectBrandFilter={handleSelectBrandFilter}
             onOpenBrandStore={handleOpenBrandStore}
-            onOpenNewsModal={(n) => setNewsModalItem(n)}
+                onOpenNewsModal={(n) => setNewsModalItem(n)}
+                wishlist={wishlist}
+                onToggleWishlist={handleToggleWishlist}
           />
         );
       case 'BRANDS':

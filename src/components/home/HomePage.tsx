@@ -6,20 +6,24 @@ import { BestCollection } from './BestCollection';
 import { NewArrivals } from './NewArrivals';
 
 interface HomePageProps {
-  onOpenQuickView: (product: ShoeProduct) => void;
-  onNavigate: (section: NavSection) => void;
-  onSelectBrandFilter: (brand: BrandId) => void;
-  onOpenBrandStore: (url: string, brandName: string) => void;
-  onOpenNewsModal: (news: NewsItem) => void;
-  products?: ShoeProduct[];
+    onOpenQuickView: (product: ShoeProduct) => void;
+    onNavigate: (section: NavSection) => void;
+    onSelectBrandFilter: (brand: BrandId) => void;
+    onOpenBrandStore: (url: string, brandName: string) => void;
+    onOpenNewsModal: (news: NewsItem) => void;
+    wishlist: string[];
+    onToggleWishlist: (productId: string) => void;
+    products?: ShoeProduct[];
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
-  onOpenQuickView,
-  onNavigate,
-  onSelectBrandFilter,
-  onOpenBrandStore,
-  products,
+    onOpenQuickView,
+    onNavigate,
+    onSelectBrandFilter,
+    onOpenBrandStore,
+    wishlist,
+    onToggleWishlist,
+    products,
 }) => {
   return (
     <div className="bg-white text-neutral-900">
@@ -30,13 +34,13 @@ export const HomePage: React.FC<HomePageProps> = ({
       />
 
       {/* 2. Product Shopping Mall: Best Collection */}
-      <BestCollection
-        onOpenQuickView={onOpenQuickView}
-        onNavigate={onNavigate}
-        wishlist={[]}
-        onToggleWishlist={() => {}}
-        products={products}
-      />
+          <BestCollection
+              onOpenQuickView={onOpenQuickView}
+              onNavigate={onNavigate}
+              wishlist={wishlist}
+              onToggleWishlist={onToggleWishlist}
+              products={products}
+          />
 
       {/* 3. Product Shopping Mall: New Arrivals */}
       <NewArrivals

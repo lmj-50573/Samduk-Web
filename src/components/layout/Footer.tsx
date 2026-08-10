@@ -66,14 +66,15 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7">
             <span className="font-mono text-xs text-blue-500 uppercase tracking-widest block mb-2 font-bold">
-              SAMDUK FOOTWEAR PLATFORM · EST 1997
+            WANTU · OFFICIAL BRAND PLATFORM
             </span>
             <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight uppercase">
-              ENGINEERED FOR EXTREMES. CRAFTED FOR LIFE.
+             FIND YOUR NEXT PAIR.
             </h3>
             <p className="text-neutral-400 text-sm mt-3 max-w-xl">
-              삼덕통상은 한국을 대표하는 글로벌 첨단 풋웨어 제조 기업입니다.<br />
-              GORE-TEX® 및 BOA® Fit System 공식 제조 파트너로서 산업현장과 대자연을 위한 최고의 품질을 약속합니다.
+                          WANTU는 검증된 제조 파트너의 브랜드를 큐레이션하는 플랫폼입니다.<br/>
+                          K2 SAFETY, EIDER, BLACK YAK 등 신뢰할 수 있는 브랜드를 만나고<br />
+                          공식 판매처에서 직접 구매하세요.
             </p>
           </div>
 
@@ -90,7 +91,7 @@ export const Footer: React.FC<FooterProps> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="기업 B2B 뉴스레터 또는 제품 카탈로그 이메일"
+                  placeholder="B2B 뉴스레터 구독 이메일"
                   className="flex-1 bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 transition-colors"
                 />
                 <button
@@ -119,29 +120,32 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="lg:col-span-4 space-y-4">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 bg-blue-600 text-white flex items-center justify-center font-black text-base rounded-sm">
-              S
+              W
             </div>
             <span className="text-xl font-black tracking-tighter uppercase">
-              SAMDUK <span className="text-blue-500">FOOTWEAR</span>
+              WANT <span className="text-blue-500">U</span>
             </span>
           </div>
 
           <p className="text-xs text-neutral-400 leading-relaxed">
-            비에스앤디(BS&D) 기반의 신발 R&D 및 바이오메카닉스 전문 엔지니어링을 통해 대한민국을 넘어 전 세계 60여 개국 브랜드에 프리미엄 풋웨어를 공급합니다.
+                      제조사의 기술력을 직접 확인하고 비교할 수 있는
+                      브랜드 큐레이션 플랫폼입니다.
+                      K2 SAFETY, EIDER, BLACK YAK 등
+                      검증된 제조 파트너의 공식 제품만을 엄선해 소개합니다.
           </p>
 
           <div className="pt-2 flex flex-wrap gap-2">
             <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded text-[11px] font-mono text-neutral-300">
               <Award className="w-3.5 h-3.5 text-blue-500 mr-1" />
-              GORE-TEX Partner
+              OEM·ODM
             </span>
             <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded text-[11px] font-mono text-neutral-300">
               <Award className="w-3.5 h-3.5 text-blue-500 mr-1" />
-              BOA® Certified
+              Est. 1997
             </span>
             <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded text-[11px] font-mono text-neutral-300">
               <Globe className="w-3.5 h-3.5 text-blue-500 mr-1" />
-              K-Safety No.1
+              Safety Footwear
             </span>
           </div>
         </div>
@@ -153,12 +157,7 @@ export const Footer: React.FC<FooterProps> = ({
           </h4>
           <ul className="space-y-2 text-sm text-neutral-300">
             <li>
-              <button 
-                onClick={() => onNavigate('HOME')} 
-                className="hover:text-blue-500 transition-colors cursor-pointer"
-              >
-                HOME
-              </button>
+
             </li>
             <li>
               <button 
@@ -198,7 +197,7 @@ export const Footer: React.FC<FooterProps> = ({
                 className="hover:text-blue-500 transition-colors cursor-pointer"
               >
                 NEWS & PRESS
-              </button>
+              </button> 
             </li>
           </ul>
         </div>
@@ -245,24 +244,24 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-start space-x-2">
               <MapPin className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
-                <span className="text-neutral-300 font-bold block">부산 HQ 및 R&D 센터</span>
-                <span>부산광역시 강서구 녹산산업중로 192번길 45</span>
+                <span className="text-neutral-300 font-bold block">삼덕통상 (주)</span>
+                <span>부산광역시 강서구 낙동남로511번길 11 국제산업물류단지</span>
               </div>
             </div>
             <div className="flex items-start space-x-2">
               <Globe className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
-                <span className="text-neutral-300 font-bold block">베트남 스마트공장</span>
-                <span>Binh Duong Province, Republic of Vietnam</span>
+                <span className="text-neutral-300 font-bold block">베트남 공장</span>
+                <span>베트남 타이닌성 호아빈 공단 7번길 롯트 F2</span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
               <Phone className="w-4 h-4 text-blue-500 shrink-0" />
-              <span>+82 051-831-8800 (대표전화)</span>
+              <span>+82 051-831-4631 (대표전화)</span>
             </div>
             <div className="flex items-center space-x-2">
               <Mail className="w-4 h-4 text-blue-500 shrink-0" />
-              <span>contact@samduk.com</span>
+              <span>gy.moont@samduk.net</span>
             </div>
           </div>
         </div>
@@ -273,10 +272,10 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500">
           <div>
             삼덕통상(주) | 대표이사: 문창섭 | 사업자등록번호: 605-81-34892
-            <span className="hidden md:inline"> | ISO 9001 · 14001 · 45001 인증 기업</span>
+            <span className="hidden md:inline"> </span>
           </div>
           <div className="mt-2 sm:mt-0 font-mono">
-            © {new Date().getFullYear()} SAMDUK FOOTWEAR CO., LTD. ALL RIGHTS RESERVED.
+                 © {new Date().getFullYear()} Copyright(c) 2011 SAMDUK TONGSANG Co. Ltd. All rights reserved.
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoeProduct, NavSection } from '../../types';
 import { PRODUCTS_DATA } from '../../data/samdukData';
 import { Eye, Heart, ArrowRight, Award, Check } from 'lucide-react';
+
 
 interface BestCollectionProps {
   onOpenQuickView: (product: ShoeProduct) => void;
@@ -18,15 +19,39 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
   onToggleWishlist,
   products = PRODUCTS_DATA,
 }) => {
-  const bestProducts = products.filter((p) => p.isBest);
-  const [activeTab, setActiveTab] = useState<'ALL' | 'Safety' | 'Outdoor' | 'Running' | 'Lifestyle'>('ALL');
+    const bestProducts = products.filter((p) => p.isBest);
+    const [activeTab, setActiveTab] = useState<'ALL' | 'Safety' | 'Outdoor' | 'Running' | 'Lifestyle'>('ALL');
 
-  const filteredProducts = activeTab === 'ALL' 
-    ? bestProducts.slice(0, 4)
-    : bestProducts.filter(p => p.category === activeTab).slice(0, 4);
+    const filteredProducts = activeTab === 'ALL'
+        ? bestProducts.slice(0, 4)
+        : bestProducts.filter(p => p.category === activeTab).slice(0, 4);
 
-  const heroBest = filteredProducts[0] || bestProducts[0];
-  const sideBest = filteredProducts.slice(1, 4);
+    // 순서를 기억하는 state 추가
+    const [customOrder, setCustomOrder] = useState<string[]>(filteredProducts.map(p => p.id));
+
+    // 탭이 바뀌면 순서 초기화
+    useEffect(() => {
+        setCustomOrder(filteredProducts.map(p => p.id));
+    }, [activeTab]);
+
+    // customOrder 순서대로 실제 상품 배열 재구성
+    const orderedProducts = customOrder
+        .map(id => filteredProducts.find(p => p.id === id))
+        .filter((p): p is ShoeProduct => p !== undefined);
+
+    const heroBest = orderedProducts[0] || bestProducts[0];
+    const sideBest = orderedProducts.slice(1, 4);
+
+    // 카드를 1번 자리로 올리는 함수
+    const handlePromoteToHero = (productId: string) => {
+        setCustomOrder((prev) => {
+            const idx = prev.indexOf(productId);
+            if (idx <= 0) return prev;
+            const newOrder = [...prev];
+            [newOrder[0], newOrder[idx]] = [newOrder[idx], newOrder[0]];
+            return newOrder;
+        });
+    };
 
   return (
     <section className="py-24 bg-neutral-100 text-neutral-900 border-b border-neutral-200">
@@ -39,8 +64,8 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
               BEST COLLECTION
             </h2>
             <p className="text-neutral-500 text-sm mt-2 max-w-xl">
-              실제 산업 현장과 백패커, 시티 워커들이 입증한 삼덕통상 베스트셀러 컬렉션.<br />
-              성능과 내구성의 검증을 거친 대표 신발입니다.
+                          삼덕통상이 직접 디자인한 안전화로 K2_SAFETY와 함꼐 최고의 안전화를 만나보세요. <br></br>
+                          다양한 카테고리의 안전화 중에서 여러분의 스타일과 필요에 맞는 제품을 선택할 수 있습니다.
             </p>
           </div>
 
@@ -75,10 +100,6 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
 
-                {/* Ranking Badge */}
-                <div className="absolute top-5 left-5 px-3.5 py-1.5 bg-blue-600 text-white text-xs font-mono font-bold uppercase tracking-widest rounded-full shadow-lg">
-                  #1 RECOMMENDED CHOICE
-                </div>
 
                 {/* Wishlist Button */}
                 <button
@@ -98,8 +119,7 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
                     <span>{heroBest.brand}</span>
                     <span>·</span>
                     <span>{heroBest.category}</span>
-                    <span>·</span>
-                    <span>★ {heroBest.rating} ({heroBest.reviewCount})</span>
+                    
                   </div>
                   <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
                     {heroBest.name}
@@ -153,14 +173,15 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
           )}
 
           {/* 3 Secondary Best Cards (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between gap-4">
+           <div className="lg:col-span-5 flex flex-col justify-start gap-4">
             {sideBest.map((product, idx) => {
               const isSaved = wishlist.includes(product.id);
               return (
-                <div
-                  key={product.id}
-                  className="group bg-white rounded-2xl p-4 border border-neutral-200 hover:border-blue-500 transition-all flex items-center space-x-4 shadow-sm hover:shadow-lg"
-                >
+                  <div
+                      key={product.id}
+                      onClick={() => handlePromoteToHero(product.id)}
+                      className="group bg-white rounded-2xl p-4 border border-neutral-200 hover:border-blue-500 transition-all flex items-center space-x-4 shadow-sm hover:shadow-lg cursor-pointer"
+                  >
                   {/* Thumbnail */}
                   <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
                     <img
@@ -186,14 +207,24 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
                       {product.nameKo}
                     </p>
 
-                    <div className="pt-2 flex items-center justify-between">
-                      <div className="font-mono text-sm font-black text-neutral-900">
-                        ₩{product.price.toLocaleString()}
-                      </div>
+                          <div className="pt-2 flex items-center justify-between">
+                              <div>
+                                  <div className="font-mono text-sm font-black text-neutral-900">
+                                      ₩{product.price.toLocaleString()}
+                                  </div>
+                                  {product.originalPrice && product.originalPrice > product.price && (
+                                      <div className="font-mono text-[10px] text-neutral-400 line-through">
+                                          ₩{product.originalPrice.toLocaleString()}
+                                      </div>
+                                  )}
+                              </div>
 
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => onToggleWishlist(product.id)}
+                          onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleWishlist(product.id);
+                           }}
                           className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                             isSaved ? 'text-red-500 bg-red-50' : 'text-neutral-400 hover:text-red-500'
                           }`}
@@ -202,7 +233,10 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
                           <Heart className="w-4 h-4 fill-current" />
                         </button>
                         <button
-                          onClick={() => onOpenQuickView(product)}
+                                      onClick={(e) => {
+                                          e.stopPropagation();
+                                          onOpenQuickView(product);
+                                      }}
                           className="px-3 py-1.5 bg-neutral-900 hover:bg-blue-600 text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-1"
                         >
                           <span>QUICK VIEW</span>

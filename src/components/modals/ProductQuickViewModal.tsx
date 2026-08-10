@@ -98,9 +98,6 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
               <span className="text-xs font-mono font-bold tracking-widest text-blue-600 uppercase">
                 {product.brand} · {product.category}
               </span>
-              <span className="text-xs font-mono text-neutral-400">
-                ★ {product.rating} ({product.reviewCount} Reviews)
-              </span>
             </div>
 
             <h2 className="text-2xl font-black uppercase tracking-tight text-neutral-900 leading-tight">
@@ -176,7 +173,7 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
             </div>
 
             {/* Detailed Specs list */}
-            <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/80 space-y-1.5 text-xs font-mono text-neutral-700">
+                      <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/80 space-y-1.5 text-xs font-mono text-neutral-700 whitespace-pre-line">
               <div>
                 <span className="text-neutral-400">UPPER:</span> {product.specs.upper}
               </div>

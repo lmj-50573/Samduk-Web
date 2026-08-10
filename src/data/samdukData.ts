@@ -14,12 +14,12 @@ export const BRANDS_DATA: BrandInfo[] = [
     nameKo: '케이투세이프티 (K2 Safety)',
     tagline: 'ULTIMATE INDUSTRIAL PROTECTIVE WORKWEAR SHOES',
     description: '산업 안전화 시장을 선도하는 고강도 안전화 브랜드 K2 Safety.\n험로, 중공업, 물류 및 현장 기술자를 위해 최고 등급의 내답판과 토캡, BOA 다이얼 시스템을 집약한 무결점 안전 장비입니다.',
-    heroImage: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80',
+    heroImage: 'k2_main.png',
     logoText: 'K2 SAFETY',
     accentColor: '#D97706',
     categoryFocus: 'Safety & Industrial Work',
     foundedYear: '1995',
-    officialStoreUrl: 'https://www.k2safety.co.kr',
+    officialStoreUrl: 'https://www.k-village.co.kr/safety',
     keyFeatures: [
       'KCS 국가안전인증 1급 및 방검(내답판) 섬유 적용',
       'BOA® 듀얼 및 싱글 다이얼 정밀 조임 시스템',
@@ -38,7 +38,7 @@ export const BRANDS_DATA: BrandInfo[] = [
     nameKo: '아이더 (Eider)',
     tagline: 'FRENCH CHIC PERFORMANCE & TRAIL WALKING',
     description: '프랑스 알프스의 모던 아웃도어 헤리티지를 담은 아이더.\n도심 워킹부터 전문 하이킹과 트레일 러닝까지 아우르는 스타일리시 퍼포먼스 풋웨어를 삼덕통상의 정밀 가공 기술로 생산합니다.',
-    heroImage: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=1200&q=80',
+    heroImage: '/eider_main.png',
     logoText: 'EIDER',
     accentColor: '#2563EB',
     categoryFocus: 'Trail Walking & European Performance',
@@ -62,7 +62,7 @@ export const BRANDS_DATA: BrandInfo[] = [
     nameKo: '블랙야크 (Black Yak)',
     tagline: 'HIMALAYAN ALPINE HEAVY DUTY ENGINEERING',
     description: '히말라야 알파인 정신에서 탄생한 익스트림 아웃도어 명가 블랙야크.\n눈보라와 빙판, 거친 고산 능선까지 정복할 수 있는 강력한 그립과 방수 방풍 시스템을 자랑합니다.',
-    heroImage: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1200&q=80',
+    heroImage: '/black_main.png',
     logoText: 'BLACK YAK',
     accentColor: '#111827',
     categoryFocus: 'Extreme Alpine & Heavy Duty',
@@ -84,13 +84,13 @@ export const BRANDS_DATA: BrandInfo[] = [
 
 export const PRODUCTS_DATA: ShoeProduct[] = [
   {
-    id: 'stelth-s6-boa-gtx',
-    name: 'K2 SAFETY HEAVY-DUTY DUAL BOA® GTX',
-    nameKo: 'K2 SAFETY 올리브 카키 듀얼 BOA® 고어텍스 중컷 안전화',
+        id: 'stelth-s6-boa-gtx',
+        name: 'K2 SAFETY LT-121NA (Navy)',
+        nameKo: '가벼움과 안전성을 모두 갖춘 초경량 안전화',
     brand: 'K2_SAFETY',
     category: 'Safety',
-    price: 248000,
-    originalPrice: 279000,
+    price: 108000,
+    originalPrice: 119000,
     isNew: true,
     isBest: true,
     isFeatured: true,
@@ -99,22 +99,22 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     image: '/k2_safety_boa_gtx.jpg',
         gallery: [
       '/k2_safety_boa_gtx.jpg',
-      '/k2_olive_boa_boot_detail.svg',
+      '/k2_safety_boa_gtx1-1.jpg',
       '/k2_safety_boa_gtx.jpg'
     ],
-    shortDescription: '올리브 카키 갑피와 설포·측면 이중 BOA® 다이얼 조임 시스템, 투명 TPU 충격 흡수 힐 패널이 결합된 삼덕통상 대표 K2 SAFETY 프리미엄 고어텍스 중컷 안전화.',
+        shortDescription: '460g 초경량 설계로 작업 시 발의 부담을 줄이고, \n BOA® Fit System과 논슬립 아웃솔로 편안하고 안정적인 착화감을 제공합니다.',
     specs: {
-      upper: 'Olive Khaki Armor Nubuck + K2 Toe Protection Cap',
-      sole: 'K2 SAFETY High-Grip Rubber Outsole + Transparent TPU Heel Cushioning',
-      weight: '520g (Size 265mm)',
-      safetyStandard: 'KCS 인증 1급 / ESD 정전기 방지 / 방검 섬유 내답판',
+      upper: '코듀라 매쉬 - 뛰어난 내마모성, 높은 인장·찢김 강도, 가벼움, 부드러운 터치, 빠른 건조',
+      sole: '파이론 미드솔, 러버 아웃솔 - 논슬립 성능으로 미끄럼 사고 예방',
+      weight: '460g (Size 265mm)',
+      safetyStandard: '보통 작업용 안전화 - 컴포짓 토캡(경량·단열·비금속) + ARMOR-FLEX 내답원단 / 캐솔라이트 인솔(복원력·충격흡수·항균/항취 99.9%)',
       waterproof: true,
-      closureSystem: 'BOA® Dual Dial Fit System (Tongue + Ankle)'
+      closureSystem: 'BOA® Fit System - 다이얼 조작으로 간편한 착탈, 최적의 착화감'
     },
     technologies: ['GORE-TEX', 'BOA', 'K-SAFETY', 'ORTHOLITE'],
     colors: ['Olive Khaki / Charcoal / Amber TPU'],
     sizes: [245, 250, 255, 260, 265, 270, 275, 280, 285, 290],
-    officialStoreUrl: 'https://www.k2safety.co.kr'
+        officialStoreUrl: 'https://www.k-village.co.kr/goods/SC424020N4'
   },
   {
     id: 'stelth-a4-light-work',
@@ -128,9 +128,9 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: false,
     rating: 4.8,
     reviewCount: 194,
-    image: '/k2_lt121_shoe.svg',
-    gallery: [
-      '/k2_lt121_shoe.svg'
+      image: '/sample.png',
+      gallery: [
+      '/sample.png'
     ],
     shortDescription: '러닝화처럼 가볍고 편안한 4인치 작업화. 공장 설비, 물류, 가벼운 공정에서 피로 없이 민첩한 움직임을 보장합니다.',
     specs: {
@@ -146,37 +146,38 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     sizes: [240, 245, 250, 255, 260, 265, 270, 275, 280],
     officialStoreUrl: 'https://www.k2safety.co.kr/product/a4-work-runner'
   },
-  {
-    id: 'treksta-kobra-970-gtx',
-    name: 'EIDER QUANTUM TRAIL GORE-TEX',
-    nameKo: '아이더(EIDER) 퀀텀 트레일 고어텍스 하이킹화',
-    brand: 'EIDER',
-    category: 'Outdoor',
-    price: 275000,
-    originalPrice: 320000,
-    isNew: false,
-    isBest: true,
-    isFeatured: true,
-    rating: 4.9,
-    reviewCount: 812,
-    image: '/k2_olive_boa_boot.svg',
-    gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
-    ],
-    shortDescription: '프랑스 아웃도어 감성의 아이더 시그니처 트레일 슈즈. 퀀텀 아치 서포트 인솔과 고어텍스 방수 시스템.',
-    specs: {
-      upper: 'GORE-TEX® Performance Shell + Engineered Armor Mesh',
-      sole: 'EIDER Quantum Grip™ High Traction Outsole',
-      weight: '440g (Size 265mm)',
-      waterproof: true,
-      closureSystem: 'BOA® Fit System'
+    {
+        id: 'k2-safety-lt121vdg',
+        name: 'K2 SAFETY LT-121VDG DARK GREY',
+        nameKo: '초경량 방수 절연안전화',
+        brand: 'K2_SAFETY',
+        category: 'Safety',
+        price: 126000,
+        originalPrice: 150000,
+        isNew: true,
+        isBest: true,
+        isFeatured: true,
+        rating: 0,
+        reviewCount: 0,
+        image: '/k2_LT_121vdg.jpg',
+        gallery: [
+            '/k2_LT_121vdg.jpg',
+            'k2_LT_121vdg1-1.jpg',
+        ],
+        shortDescription: '435g 초경량 설계로 작업 시 발의 부담을 줄이고, 방수·투습 기능과 14,000V 절연 성능으로 사계절 안전한 작업 환경을 제공합니다.',
+        specs: {
+            upper: '코듀라®(CORDURA®) 원단 - 뛰어난 내마모성, 높은 인장·뚫림 강도, 가벼움과 빠른 건조',
+            sole: '논슬립 세제 1등급 아웃솔 - 미끄러짐 사고 예방',
+            weight: '435g (265mm, 0.5PRS 기준)',
+            safetyStandard: '컴포짓 토캡(비금속) + 아머플렉스 슬림 내답판 / 14,000V 절연 안전화 / 캐솔라이트 인솔(충격흡수·복원력·항균항취 99.9%)',
+            waterproof: true,
+            closureSystem: 'BOA® Fit System - 다이얼 조작으로 간편한 착탈, 최적의 착화감',
+        },
+        technologies: ['BOA', 'K-SAFETY'],
+        colors: ['Dark Grey'],
+        sizes: [230, 235, 240, 245, 250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300],
+        officialStoreUrl: 'https://www.k-village.co.kr/goods/SC426021C6',
     },
-    technologies: ['GORE-TEX', 'BOA', 'VIBRAM', 'ORTHOLITE'],
-    colors: ['Olive Khaki / Charcoal'],
-    sizes: [245, 250, 255, 260, 265, 270, 275, 280, 285],
-    officialStoreUrl: 'https://www.eider.co.kr'
-  },
   {
     id: 'treksta-alpine-pro-high',
     name: 'BLACK YAK ALPINE PRO MOUNTAINEERING',
@@ -189,10 +190,9 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: false,
     rating: 4.9,
     reviewCount: 156,
-    image: '/k2_olive_boa_boot.svg',
-    gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+      image: '/sample.png',
+      gallery: [
+      '/sample.png'
     ],
     shortDescription: '히말라야 알피니스트를 위한 장거리 중등산화. 암벽과 너덜길에서도 발목을 안전하게 보호하며 루프그립으로 최상의 마찰력 제공.',
     specs: {
@@ -207,37 +207,38 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     sizes: [255, 260, 265, 270, 275, 280, 285],
     officialStoreUrl: 'https://www.blackyak.com'
   },
-  {
-    id: 'kalpa-carbon-flight-01',
-    name: 'BLACK YAK HEAVY DUTY TRAIL PRO',
-    nameKo: '블랙야크 헤비듀티 트레일 프로 고어텍스',
-    brand: 'BLACK_YAK',
-    category: 'Outdoor',
-    price: 239000,
-    originalPrice: 269000,
-    isNew: true,
-    isBest: true,
-    isFeatured: true,
-    rating: 4.9,
-    reviewCount: 380,
-    image: '/k2_olive_boa_boot.svg',
-    gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
-    ],
-    shortDescription: '히말라야 헤리티지와 삼덕통상의 정밀 고어텍스 본딩 공법이 집약된 블랙야크 고기능성 트레일 슈즈.',
-    specs: {
-      upper: 'AeroWeave™ Mesh + Premium Synthetic Leather',
-      sole: 'BLACK YAK Loop-Grip Traction Rubber',
-      weight: '360g (Size 265mm)',
-      waterproof: true,
-      closureSystem: 'BOA® Fit System'
+    {
+        id: 'k2-safety-kg115',
+        name: 'K2 SAFETY KG-115 OLIVE KHAKI',
+        nameKo: '고어텍스 쿠셔닝 안전화',
+        brand: 'K2_SAFETY',
+        category: 'Safety',
+        price: 263000,
+        originalPrice: 300000,
+        isNew: false,
+        isBest: true,
+        isFeatured: true,
+        rating: 0,
+        reviewCount: 0,
+        image: '/kg_115.jpg',
+        gallery: [
+            '/kg_115.jpg',
+            '/kg_1151-1.jpg',
+        ],
+        shortDescription: 'GORE-TEX 방수·투습 시스템과 듀얼 BOA® Fit System을 적용해, 어떤 현장에서도 쾌적하고 정밀한 착화감을 제공하는 프리미엄 안전화입니다.',
+        specs: {
+            upper: '천연가죽 + 코듀라® 메쉬(듀폰社 원단) - 뛰어난 내구성과 통기성, 높은 인장·뚫림 강도, 가벼움과 빠른 건조',
+            sole: '파이론 미드솔 + 이중경도 미드솔(전족부 탄성·후족부 충격흡수) + 러버 논슬립 아웃솔(세제 2등급)',
+            weight: '경량 설계',
+            safetyStandard: '스카이폼 밸런스 인솔 - 충격 흡수 신소재 + 아치 서포트 구조로 자세 교정 및 피로 감소',
+            waterproof: true,
+            closureSystem: '듀얼 BOA® Fit System - 2개의 다이얼로 발목·발등 개별 미세 조절, 최적의 핏팅감',
+        },
+        technologies: ['GORE-TEX', 'BOA', 'K-SAFETY'],
+        colors: ['Olive Khaki'],
+        sizes: [230, 235, 240, 245, 250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300],
+        officialStoreUrl: 'https://www.k-village.co.kr/goods/SG623015HW',
     },
-    technologies: ['GORE-TEX', 'BOA', 'ORTHOLITE'],
-    colors: ['Olive Khaki / Charcoal'],
-    sizes: [235, 240, 245, 250, 255, 260, 265, 270, 275, 280, 285],
-    officialStoreUrl: 'https://www.blackyak.com'
-  },
   {
     id: 'kalpa-tempo-trail-pro',
     name: 'EIDER QUANTUM TRAIL PRO 4',
@@ -271,11 +272,11 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
   {
     id: 'feetzen-arch-comfort-01',
     name: 'K2 SAFETY URBAN RUNNER LOW',
-    nameKo: 'K2 SAFETY 어반 러너 로우 워크 슈즈',
+    nameKo: '어반 러너 로우 워크 슈즈',
     brand: 'K2_SAFETY',
     category: 'Work',
-    price: 198000,
-    originalPrice: 228000,
+    price: 108000,
+    originalPrice: 119000,
     isNew: true,
     isBest: true,
     isFeatured: true,
@@ -283,8 +284,8 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     reviewCount: 610,
     image: '/k2_safety_boa_gtx2.jpg',
     gallery: [
-      '/k2_safety_boa_gtx2.jpg',
-      '/k2_olive_boa_boot_detail.svg'
+        '/k2_safety_boa_gtx2.jpg',
+        '/k2_safety_boa_gtx2-1.jpg'
     ],
     shortDescription: '도시 현장 및 경작업자들을 위한 스포티한 초경량 안전 로우 슈즈.',
     specs: {
