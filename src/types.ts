@@ -5,7 +5,9 @@ export type NavSection =
   | 'LOOKBOOK'
   | 'STORY'
   | 'NEWS'
-  | 'CONTACT';
+  | 'CONTACT'
+  | 'MYPAGE'
+  | 'ADMIN';
 
 export type ShoeCategory = 
   | 'ALL'

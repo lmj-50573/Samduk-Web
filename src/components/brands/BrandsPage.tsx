@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 interface BrandsPageProps {
-  initialBrand?: BrandId;
+initialBrand?: BrandId | 'DISCOVERY';
   onOpenQuickView: (product: ShoeProduct) => void;
   onNavigate: (section: NavSection) => void;
   onSelectBrandFilter: (brand: BrandId) => void;
@@ -30,7 +30,7 @@ export const BrandsPage: React.FC<BrandsPageProps> = ({
   onSelectBrandFilter,
   onOpenBrandStore,
 }) => {
-  const [activeBrandId, setActiveBrandId] = useState<BrandId>(initialBrand);
+const [activeBrandId, setActiveBrandId] = useState<BrandId | 'DISCOVERY'>(initialBrand);
   const brand = BRANDS_DATA.find((b) => b.id === activeBrandId) || BRANDS_DATA[0];
   const brandProducts = PRODUCTS_DATA.filter((p) => p.brand === activeBrandId);
 

@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { NavSection, BrandId } from '../../types';
 import { BRANDS_DATA } from '../../data/samdukData';
-import { 
-  Search, 
-  Heart, 
-  Menu, 
-  X, 
-  ExternalLink, 
-  ChevronDown, 
-  ShieldCheck,
-  Compass,
-  Mountain,
-  Flame,
-  Leaf,
-  Activity,
-  Camera,
-  Image as ImageIcon
-} from 'lucide-react';
+import {  
+    Search, 
+    Heart, 
+    Menu, 
+    X, 
+    ExternalLink, 
+    ChevronDown, 
+    ShieldCheck,
+    Compass,
+    Mountain,
+    Flame,
+    Leaf,
+    Activity,
+    Camera,
+    Image as ImageIcon,
+    User,
+    LogOut
+  } from 'lucide-react';
 
 interface NavbarProps {
   currentSection: NavSection;
@@ -26,6 +29,7 @@ interface NavbarProps {
   onOpenWishlist: () => void;
   onSelectBrandFilter: (brand: BrandId) => void;
   onOpenBrandStore: (url: string, brandName: string) => void;
+  onOpenAuthModal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -36,7 +40,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenWishlist,
   onSelectBrandFilter,
   onOpenBrandStore,
+  onOpenAuthModal,
 }) => {
+  const { user, profile, isAdmin, signOut } = useAuth();
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [brandsDropdownOpen, setBrandsDropdownOpen] = useState(false);
 
@@ -93,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </button>
         </div>
-
+        
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2">
           {navItems.map((item) => {
@@ -177,38 +184,132 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
         </nav>
-
-        {/* Right Utility Icons (Search, Wishlist, Mobile menu toggle) */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
+{/* Right Utility Icons (Search, Wishlist, Account, Mobile menu toggle) */}
+        <div className="flex items-center space-x-3">
           <button
             onClick={onOpenSearch}
-            className="p-2.5 text-neutral-700 hover:text-blue-600 hover:bg-neutral-100 rounded-full transition-colors cursor-pointer flex items-center space-x-1.5"
+            className="h-9 px-3.5 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-colors cursor-pointer flex items-center space-x-1.5 text-neutral-600"
             title="모델 검색"
           >
-            <Search className="w-5 h-5" />
-            <span className="hidden md:inline text-xs font-medium text-neutral-500">검색</span>
+            <Search className="w-4 h-4" />
+            <span className="text-xs font-medium">검색</span>
           </button>
 
           <button
             onClick={onOpenWishlist}
-            className="p-2.5 text-neutral-700 hover:text-blue-600 hover:bg-neutral-100 rounded-full transition-colors relative cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center text-neutral-600 hover:text-blue-600 hover:bg-neutral-100 rounded-full transition-colors relative cursor-pointer"
             title="저장한 제품"
           >
-            <Heart className="w-5 h-5" />
+            <Heart className="w-4.5 h-4.5" />
             {wishlistCount > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 bg-blue-600 text-white font-mono text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-blue-600 text-white font-mono text-[10px] font-bold rounded-full flex items-center justify-center">
                 {wishlistCount}
               </span>
             )}
           </button>
 
-          {/* CTA Shop Now Button */}
-          <button
-            onClick={() => onNavigate('SHOP')}
-            className="hidden sm:inline-flex items-center px-4 py-2 bg-neutral-900 hover:bg-blue-600 text-white text-xs font-bold uppercase tracking-wider rounded-full transition-colors cursor-pointer"
-          >
-            SHOP CATALOG
-          </button>
+          {/* Account / Login button */}
+          <div className="relative">
+            {user ? (
+              <>
+                <button
+                  onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                  className="h-9 pl-1.5 pr-3 border border-neutral-300 hover:border-neutral-400 rounded-full transition-colors cursor-pointer flex items-center space-x-2"
+                  title="내 계정"
+                >
+                  <div className="w-6 h-6 rounded-full bg-neutral-100 text-neutral-500 flex items-center justify-center shrink-0">
+                    <User className="w-3.5 h-3.5" />
+                  </div>
+
+                  <span className="text-xs font-bold max-w-[80px] truncate text-neutral-800">
+                    {profile?.username || '내 계정'}
+                  </span>
+                  {isAdmin && (
+                    <span className="hidden md:inline text-[10px] font-mono font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                      ADMIN
+                    </span>
+                  )}
+                </button>
+
+                {accountMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-2xl border border-neutral-200 p-2 z-50">
+                    <div className="px-3 py-2.5 border-b border-neutral-100 flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-bold text-neutral-900 truncate">
+                          {profile?.username ? `${profile.username}님` : profile?.email}
+                        </div>
+                        {isAdmin && (
+                          <div className="text-[10px] text-neutral-500 mt-0.5">관리자</div>
+                        )}
+                      </div>
+                      {isAdmin && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
+                          ADMIN
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="py-1">
+                      {isAdmin && (
+                        <button
+                          onClick={() => {
+                            setAccountMenuOpen(false);
+                            onNavigate('ADMIN' as NavSection);
+                          }}
+                          className="w-full text-left px-3 py-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer flex items-center space-x-2 mb-1"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5" />
+                          <span>관리자 페이지</span>
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          onNavigate('MYPAGE' as NavSection);
+                        }}
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50 rounded-lg cursor-pointer flex items-center space-x-2"
+                      >
+                        <User className="w-3.5 h-3.5" />
+                        <span>마이페이지</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          onOpenWishlist();
+                        }}
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-neutral-700 hover:bg-neutral-50 rounded-lg cursor-pointer flex items-center space-x-2"
+                      >
+                        <Heart className="w-3.5 h-3.5" />
+                        <span>찜한 상품</span>
+                      </button>
+                    </div>
+
+                    <div className="border-t border-neutral-100 pt-1">
+                      <button
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          signOut();
+                        }}
+                        className="w-full text-left px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg cursor-pointer flex items-center space-x-2"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>로그아웃</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <button
+                onClick={onOpenAuthModal}
+                className="h-9 px-4 border border-neutral-300 hover:border-neutral-400 hover:bg-neutral-50 rounded-full transition-colors cursor-pointer text-xs font-bold text-neutral-800"
+              >
+                로그인 / 회원가입
+              </button>
+            )}
+          </div>
 
           {/* Mobile hamburger button */}
           <button
@@ -218,7 +319,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-      </div>
+        </div>
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (

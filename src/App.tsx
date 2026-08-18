@@ -20,8 +20,13 @@ import { BrandStoreModal } from './components/modals/BrandStoreModal';
 import { NewsDetailModal } from './components/modals/NewsDetailModal';
 import { SearchModal } from './components/modals/SearchModal';
 import { WishlistModal } from './components/modals/WishlistModal';
+import { AuthProvider } from './contexts/AuthContext';
+import { AuthModal } from './components/auth/AuthModal';
+import { MyPage } from './components/mypage/MyPage';
+import { AdminPage } from './components/admin/AdminPage';
 
 export default function App() {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<NavSection>('HOME');
   const [selectedBrandFilter, setSelectedBrandFilter] = useState<BrandId | 'ALL'>('ALL');
   
@@ -233,22 +238,36 @@ export default function App() {
             onNavigate={handleNavigate}
           />
         );
-      case 'CONTACT':
-        return <ContactPage onNavigate={handleNavigate} />;
-      default:
-        return (
-          <HomePage
-            onOpenQuickView={(p) => setQuickViewProduct(p)}
-            onNavigate={handleNavigate}
-            onSelectBrandFilter={handleSelectBrandFilter}
-            onOpenBrandStore={handleOpenBrandStore}
-            onOpenNewsModal={(n) => setNewsModalItem(n)}
-          />
-        );
+    case 'CONTACT':
+      return <ContactPage onNavigate={handleNavigate} />;
+    case 'MYPAGE':
+      return (
+        <MyPage
+          wishlistCount={wishlist.length}
+          onOpenWishlist={() => setIsWishlistOpen(true)}
+        />
+      );
+      case 'ADMIN':
+        return <AdminPage />;
+    default:
+      
+      return (
+        <HomePage
+          products={products}
+          onOpenQuickView={(p) => setQuickViewProduct(p)}
+          onNavigate={handleNavigate}
+          onSelectBrandFilter={handleSelectBrandFilter}
+          onOpenBrandStore={handleOpenBrandStore}
+          onOpenNewsModal={(n) => setNewsModalItem(n)}
+          wishlist={wishlist}
+          onToggleWishlist={handleToggleWishlist}
+        />
+      );
     }
   };
 
   return (
+    <AuthProvider>
     <div className="min-h-screen flex flex-col bg-neutral-950 text-white font-sans antialiased selection:bg-blue-600 selection:text-white">
       {/* Global Navigation Navbar */}
       <Navbar
@@ -262,6 +281,7 @@ export default function App() {
           handleNavigate('SHOP');
         }}
         onOpenBrandStore={handleOpenBrandStore}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
       />
 
       {/* Main Page Area */}
@@ -318,7 +338,12 @@ export default function App() {
           handleNavigate('SHOP');
         }}
       />
+      <AuthModal
+  isOpen={isAuthModalOpen}
+  onClose={() => setIsAuthModalOpen(false)}
+/>
     </div>
+    </AuthProvider>
   );
 }
 
