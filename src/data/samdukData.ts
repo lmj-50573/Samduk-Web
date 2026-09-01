@@ -37,7 +37,7 @@ export const BRANDS_DATA: BrandInfo[] = [
     name: 'EIDER',
     nameKo: '아이더 (Eider)',
     tagline: 'FRENCH CHIC PERFORMANCE & TRAIL WALKING',
-    description: '프랑스 알프스의 모던 아웃도어 헤리티지를 담은 아이더.\n도심 워킹부터 전문 하이킹과 트레일 러닝까지 아우르는 스타일리시 퍼포먼스 풋웨어를 삼덕통상의 정밀 가공 기술로 생산합니다.',
+    description: '프랑스 알프스의 모던 아웃도어 헤리티지를 담은 아이더.\n도심 워킹부터 전문 하이킹과 트레일 러닝까지 아우르는 스타일리시 퍼포먼스 풋웨어입니다.',
     heroImage: '/eider_main.png',
     logoText: 'EIDER',
     accentColor: '#2563EB',
@@ -255,10 +255,10 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: false,
     rating: 4.8,
     reviewCount: 219,
-    image: '/k2_olive_boa_boot.svg',
+    image: '/sample.png',
     gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+      '/sample.png',
+      '/sample.png'
     ],
     shortDescription: '아이더의 퀀텀 접지력과 아치 서포트 인솔이 만난 고성능 워킹 트레일화.',
     specs: {
@@ -345,10 +345,10 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: false,
     rating: 4.9,
     reviewCount: 188,
-    image: '/k2_olive_boa_boot.svg',
+    image: '/sample.png',
     gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+      '/sample.png',
+      '/sample.png'
     ],
     shortDescription: '조선소, 제철소, 중공업 현장의 안전을 책임지는 8인치 최상급 방수·방검 보아 안전 부츠.',
     specs: {
@@ -376,10 +376,10 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: false,
     rating: 4.8,
     reviewCount: 271,
-    image: '/k2_olive_boa_boot.svg',
+    image: '/sample.png',
     gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+      '/sample.png',
+      '/sample.png'
     ],
     shortDescription: '당일 산행과 백패킹에 완벽한 밸런스를 제공하는 미드컷 트레일화. 가벼우면서도 발목을 견고하게 지탱합니다.',
     specs: {
@@ -406,10 +406,10 @@ export const PRODUCTS_DATA: ShoeProduct[] = [
     isBest: true,
     rating: 4.9,
     reviewCount: 940,
-    image: '/k2_olive_boa_boot.svg',
+    image: '/sample.png',
     gallery: [
-      '/k2_olive_boa_boot.svg',
-      '/k2_olive_boa_boot_detail.svg'
+      '/sample.png',
+      '/sample.png'
     ],
     shortDescription: '장시간 작업 및 아웃도어 활동 후 지친 발을 이완시켜주는 초탄성 구름 쿠셔닝 리커버리 슬라이드.',
     specs: {

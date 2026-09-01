@@ -43,7 +43,7 @@ export const Footer: React.FC<FooterProps> = ({
         body: JSON.stringify({
           email: email,
           type: '뉴스레터 및 카탈로그 구독 신청',
-          _subject: `[삼덕통상 뉴스레터/카탈로그 신청] ${email}`,
+          _subject: `[WANTU 뉴스레터/카탈로그 신청] ${email}`,
         }),
       });
 
@@ -72,9 +72,7 @@ export const Footer: React.FC<FooterProps> = ({
              FIND YOUR NEXT PAIR.
             </h3>
             <p className="text-neutral-400 text-sm mt-3 max-w-xl">
-                          WANTU는 검증된 제조 파트너의 브랜드를 큐레이션하는 플랫폼입니다.<br/>
-                          K2 SAFETY, EIDER, BLACK YAK 등 신뢰할 수 있는 브랜드를 만나고<br />
-                          공식 판매처에서 직접 구매하세요.
+              K2 SAFETY, EIDER, BLACK YAK — 신뢰할 수 있는 브랜드를 한곳에서.
             </p>
           </div>
 
@@ -128,24 +126,21 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
 
           <p className="text-xs text-neutral-400 leading-relaxed">
-                      제조사의 기술력을 직접 확인하고 비교할 수 있는
-                      브랜드 큐레이션 플랫폼입니다.
-                      K2 SAFETY, EIDER, BLACK YAK 등
-                      검증된 제조 파트너의 공식 제품만을 엄선해 소개합니다.
+            신뢰할 수 있는 브랜드를 한곳에서 만나는 풋웨어 큐레이션 플랫폼.
           </p>
 
           <div className="pt-2 flex flex-wrap gap-2">
             <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded text-[11px] font-mono text-neutral-300">
               <Award className="w-3.5 h-3.5 text-blue-500 mr-1" />
-              OEM·ODM
+              Curated Brands
             </span>
             <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded text-[11px] font-mono text-neutral-300">
               <Award className="w-3.5 h-3.5 text-blue-500 mr-1" />
-              Est. 1997
+              Est. 2026
             </span>
             <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded text-[11px] font-mono text-neutral-300">
               <Globe className="w-3.5 h-3.5 text-blue-500 mr-1" />
-              Safety Footwear
+              Footwear Platform
             </span>
           </div>
         </div>
@@ -173,14 +168,6 @@ export const Footer: React.FC<FooterProps> = ({
                 className="hover:text-blue-500 transition-colors cursor-pointer"
               >
                 BRANDS
-              </button>
-            </li>
-            <li>
-              <button 
-                onClick={() => onNavigate('LOOKBOOK')} 
-                className="hover:text-blue-500 transition-colors cursor-pointer"
-              >
-                LOOKBOOK
               </button>
             </li>
             <li>
@@ -235,24 +222,24 @@ export const Footer: React.FC<FooterProps> = ({
           </ul>
         </div>
 
-        {/* Corporate & Factory Info (3 cols) */}
+        {/* Platform Info (3 cols) */}
         <div className="lg:col-span-3 space-y-3">
           <h4 className="text-xs font-mono uppercase tracking-widest text-neutral-400 font-bold">
-            CORPORATE INFO
+            PLATFORM INFO
           </h4>
           <div className="space-y-2.5 text-xs text-neutral-400">
             <div className="flex items-start space-x-2">
               <MapPin className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
-                <span className="text-neutral-300 font-bold block">삼덕통상 (주)</span>
-                <span>부산광역시 강서구 낙동남로511번길 11 <br />국제산업물류단지</span>
+                <span className="text-neutral-300 font-bold block">WANTU 운영팀</span>
+                <span>서울특별시 성동구 서울숲길 25 <br />WANTU 타워 8층</span>
               </div>
             </div>
             <div className="flex items-start space-x-2">
               <Globe className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
               <div>
-                <span className="text-neutral-300 font-bold block">베트남 공장</span>
-                <span>베트남 타이닌성 <br />호아빈 공단 7번길 롯트 F2</span>
+                <span className="text-neutral-300 font-bold block">파트너 제조 거점</span>
+                <span>베트남, 인도네시아 등 <br />동남아시아 파트너 생산 네트워크</span>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -261,7 +248,7 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
             <div className="flex items-center space-x-2">
               <Mail className="w-4 h-4 text-blue-500 shrink-0" />
-              <span>gy.moont@samduk.net</span>
+              <span>hello@wantu.kr</span>
             </div>
           </div>
         </div>
@@ -271,11 +258,11 @@ export const Footer: React.FC<FooterProps> = ({
       <div className="border-t border-neutral-900 bg-neutral-950/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500">
           <div>
-            삼덕통상(주) | 대표이사: 문창섭 | 
+            WANTU | Footwear Curation Platform | 
             <span className="hidden md:inline"> </span>
           </div>
           <div className="mt-2 sm:mt-0 font-mono">
-                 © {new Date().getFullYear()} Copyright(c) 2026 SAMDUK TONGSANG Co. Ltd. All rights reserved.
+                 © {new Date().getFullYear()} Copyright(c) 2026 WANTU. All rights reserved.
           </div>
         </div>
       </div>

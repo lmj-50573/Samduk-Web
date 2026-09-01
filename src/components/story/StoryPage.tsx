@@ -1,84 +1,119 @@
 import React from 'react';
-import { FACTORY_FACILITIES, WHY_SAMDUK_PILLARS } from '../../data/samdukData';
-import { NavSection } from '../../types';
-import { 
-  Award, 
-  ShieldCheck, 
-  Globe, 
-  CheckCircle2, 
-  ArrowRight, 
-  Building2, 
-  Factory, 
-  Flame, 
-  TrendingUp 
+import { BRANDS_DATA } from '../../data/samdukData';
+import { BrandId, NavSection } from '../../types';
+import {
+  Award,
+  ShieldCheck,
+  Globe,
+  CheckCircle2,
+  ArrowRight,
+  Compass,
+  Flame,
+  Sparkles,
+  Users,
 } from 'lucide-react';
 
 interface StoryPageProps {
   onNavigate: (section: NavSection) => void;
 }
 
-export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate }) => {
-  const milestones = [
-    { year: '1997', title: '삼덕통상(주) 설립', desc: '대한민국 부산 강서구 녹산산업단지 신발 제조 공장 가동 및 기술 기업 출범' },
-    { year: '2005', title: 'K2 Safety & 아웃도어 정밀 합작 체제 구축', desc: '고기능성 인체공학 산업안전화 및 아웃도어 부츠 생산 라인 증설 및 KCS 인증 1급 획득' },
-    { year: '2010', title: '베트남 빈즈엉 대규모 공장 진출', desc: '동남아 글로벌 스마트 제조 네트워크 및 LWG 친환경 가죽 가공 설비 도입' },
-    { year: '2015', title: 'GORE-TEX® & BOA® 공식 제조 파트너', desc: '세계 최정상급 360도 투습 방수 부티 공정 및 미세 조절 다이얼 인증 파트너 체결' },
-    { year: '2022', title: '부산 R&D 바이오메카닉스 센터 확장', desc: '한국인 및 글로벌 2만 명 족형 3D 스캔 빅데이터 연구소 및 스마트 로봇 자동화 구축' },
-    { year: '2026', title: '글로벌 연 500만 족 돌파', desc: '60여 개국 브랜드 수출 및 친환경 태양광 재생에너지 100% 폐수 재활용 시스템 완성' },
-  ];
+// WANTU가 브랜드를 큐레이션할 때 기준으로 삼는 4가지 원칙
+const CURATION_PILLARS = [
+  {
+    number: '01',
+    title: 'PROVEN PERFORMANCE',
+    subtitle: '실제 현장에서 검증된 기능성',
+    description: 'GORE-TEX®, BOA® Fit System처럼 공식 인증된 기술을 사용하는 브랜드만 큐레이션합니다. 화려한 마케팅이 아니라 실제 성능으로 판단합니다.',
+  },
+  {
+    number: '02',
+    title: 'CATEGORY EXPERTISE',
+    subtitle: '한 분야에 집중한 전문성',
+    description: '안전화는 K2 SAFETY, 아웃도어는 EIDER, 알파인은 BLACK YAK처럼 각자의 영역에서 오래 쌓아온 전문성이 있는 브랜드를 선택합니다.',
+  },
+  {
+    number: '03',
+    title: 'HONEST INFORMATION',
+    subtitle: '과장 없는 정보 제공',
+    description: '스펙, 소재, 착화감을 있는 그대로 전달합니다. WANTU는 판매를 위해 정보를 왜곡하지 않습니다.',
+  },
+  {
+    number: '04',
+    title: 'DIRECT ACCESS',
+    subtitle: '공식 판매처로의 연결',
+    description: '중간 유통 없이 각 브랜드의 공식 스토어로 바로 연결해, 신뢰할 수 있는 구매 경험을 제공합니다.',
+  },
+];
 
+const getBrandIcon = (id: BrandId, className = 'w-5 h-5') => {
+  switch (id) {
+    case 'K2_SAFETY': return <ShieldCheck className={className} />;
+    case 'EIDER': return <Compass className={className} />;
+    case 'BLACK_YAK': return <Flame className={className} />;
+    default: return <ShieldCheck className={className} />;
+  }
+};
+
+// 브랜드를 고르는 과정
+const CURATION_PROCESS = [
+  { step: '01', title: '카테고리 리서치', desc: '안전화·아웃도어·알파인 각 영역에서 신뢰도 높은 브랜드를 조사합니다.' },
+  { step: '02', title: '기술 검증', desc: '방수, 방검, 접지력 등 핵심 기능이 실제로 인증되어 있는지 확인합니다.' },
+  { step: '03', title: '브랜드 선정', desc: '기준을 통과한 브랜드만 공식 파트너로 소개합니다.' },
+];
+
+export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-white text-neutral-900 pb-24">
       {/* Editorial Hero */}
       <div className="bg-neutral-950 text-white py-20 px-4 sm:px-6 lg:px-8 border-b border-neutral-800 relative overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <span className="text-xs font-mono font-bold tracking-widest text-blue-500 uppercase block mb-3">
-            HERITAGE & MANUFACTURING EXCELLENCE · SINCE 1997
+            WANTU PLATFORM PHILOSOPHY
           </span>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-none">
-            CRAFTED BY SAMDUK
+            CURATED, NOT<br />JUST COLLECTED
           </h1>
           <p className="text-neutral-300 text-base sm:text-xl font-light mt-4 max-w-3xl">
-            신발은 단순한 패션 아이템을 넘어 사람의 안전과 퍼포먼스를 좌우하는 정밀 과학입니다. 
-            1997년 창립 이래 28년 동안 대한민국과 베트남을 잇는 생산 기지에서 세계 최정상급 슈즈를 만듭니다.
+            WANTU는 신발을 만들지 않습니다. 대신 오랜 시간 검증된 브랜드만 골라,
+            믿을 수 있는 정보와 함께 한곳에서 만날 수 있게 합니다.
           </p>
 
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-white/10 font-mono">
             <div>
-              <div className="text-2xl sm:text-4xl font-black text-white">1997</div>
-              <div className="text-xs text-neutral-400 mt-0.5">ESTABLISHED YEAR</div>
+              <div className="text-2xl sm:text-4xl font-black text-white">3</div>
+              <div className="text-xs text-neutral-400 mt-0.5">CURATED BRANDS</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-4xl font-black text-white">5,000,000+</div>
-              <div className="text-xs text-neutral-400 mt-0.5">ANNUAL PAIRS CAPACITY</div>
+              <div className="text-2xl sm:text-4xl font-black text-white">2026</div>
+              <div className="text-xs text-neutral-400 mt-0.5">PLATFORM LAUNCHED</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-4xl font-black text-blue-500">60+</div>
-              <div className="text-xs text-neutral-400 mt-0.5">GLOBAL EXPORT NATIONS</div>
+              <div className="text-2xl sm:text-4xl font-black text-blue-500">4</div>
+              <div className="text-xs text-neutral-400 mt-0.5">CURATION PRINCIPLES</div>
             </div>
             <div>
-              <div className="text-2xl sm:text-4xl font-black text-white">20,000+</div>
-              <div className="text-xs text-neutral-400 mt-0.5">3D FOOT DATA SCANS</div>
+              <div className="text-2xl sm:text-4xl font-black text-white">100%</div>
+              <div className="text-xs text-neutral-400 mt-0.5">OFFICIAL PARTNER LINKS</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 4 Trust Pillars Detail */}
+      {/* 4 Curation Pillars */}
       <div className="py-20 bg-neutral-50 border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-12">
             <span className="text-xs font-mono font-bold tracking-widest text-blue-600 uppercase block mb-1">
-              SAMDUK FOOTWEAR AUTHORITY
+              WHY WE CURATE
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight uppercase">
-              4 PILLARS OF MANUFACTURING
+              4 PILLARS OF CURATION
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {WHY_SAMDUK_PILLARS.map((p) => (
-              <div key={p.id} className="bg-white p-8 rounded-3xl border border-neutral-200 shadow-sm">
+            {CURATION_PILLARS.map((p) => (
+              <div key={p.number} className="bg-white p-8 rounded-3xl border border-neutral-200 shadow-sm">
                 <span className="text-3xl font-black font-mono text-blue-600 block mb-4">
                   {p.number}
                 </span>
@@ -97,52 +132,51 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Facilities Deep Dive */}
+      {/* The Brands We Chose */}
       <div className="py-20 bg-white border-b border-neutral-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div>
             <span className="text-xs font-mono font-bold tracking-widest text-blue-600 uppercase block mb-1">
-              GLOBAL PRODUCTION NETWORK
+              THE BRANDS WE CHOSE
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight uppercase">
-              R&D AND SMART FACTORIES
+              WHY THESE THREE
             </h2>
           </div>
 
-          {FACTORY_FACILITIES.map((facility, index) => (
+          {BRANDS_DATA.map((brand, index) => (
             <div
-              key={facility.id}
-              className={`grid grid-cols-1 lg:grid-cols-12 gap-10 items-center ${
-                index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-              }`}
+              key={brand.id}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center"
             >
-              <div className="lg:col-span-7 h-[420px] rounded-3xl overflow-hidden shadow-xl bg-neutral-900">
+              <div className={`lg:col-span-7 h-[420px] rounded-3xl overflow-hidden shadow-xl bg-neutral-900 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
                 <img
-                  src={facility.image}
-                  alt={facility.name}
+                  src={brand.heroImage}
+                  alt={brand.name}
                   className="w-full h-full object-cover"
                 />
               </div>
 
-              <div className="lg:col-span-5 space-y-5">
-                <span className="text-xs font-mono bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold uppercase">
-                  {facility.role}
+              <div className={`lg:col-span-5 space-y-5 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                <span className="inline-flex items-center space-x-1.5 text-xs font-mono bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-bold uppercase">
+                  {getBrandIcon(brand.id, 'w-3.5 h-3.5')}
+                  <span>{brand.categoryFocus}</span>
                 </span>
                 <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-900">
-                  {facility.name}
+                  {brand.name}
                 </h3>
-                <p className="text-sm text-neutral-600 leading-relaxed">
-                  {facility.description}
+                <p className="text-sm text-neutral-600 leading-relaxed whitespace-pre-line">
+                  {brand.description}
                 </p>
 
                 <div className="space-y-2 pt-2">
                   <div className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-wider">
-                    CORE CERTIFICATIONS & TECH
+                    CORE TECHNOLOGY
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {facility.certifications.map((c, i) => (
-                      <div key={i} className="flex items-center space-x-2 text-xs font-bold text-neutral-800">
-                        <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                    {brand.keyFeatures.slice(0, 4).map((c, i) => (
+                      <div key={i} className="flex items-start space-x-2 text-xs font-bold text-neutral-800">
+                        <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                         <span>{c}</span>
                       </div>
                     ))}
@@ -154,32 +188,32 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Timeline Heritage */}
+      {/* How We Curate Process */}
       <div className="py-20 bg-neutral-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-14">
             <span className="text-xs font-mono font-bold tracking-widest text-blue-400 uppercase block mb-1">
-              CHRONOLOGY
+              OUR PROCESS
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight uppercase">
-              1997 TO 2026 HERITAGE
+              HOW WE CURATE
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {milestones.map((m, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {CURATION_PROCESS.map((step) => (
               <div
-                key={i}
+                key={step.step}
                 className="bg-neutral-800/80 border border-neutral-700/80 p-6 rounded-2xl relative"
               >
                 <div className="text-2xl font-black font-mono text-blue-400 mb-2">
-                  {m.year}
+                  {step.step}
                 </div>
                 <h3 className="text-base font-bold text-white uppercase mb-2">
-                  {m.title}
+                  {step.title}
                 </h3>
                 <p className="text-xs text-neutral-300 leading-relaxed font-light">
-                  {m.desc}
+                  {step.desc}
                 </p>
               </div>
             ))}
@@ -187,7 +221,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate }) => {
 
           <div className="mt-14 pt-10 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-neutral-300">
-              글로벌 브랜드와 파트너십 및 ODM/OEM 제조 제휴에 관해 상의해 보세요.
+              WANTU에 브랜드로 입점하고 싶으신가요? 제휴 문의를 남겨주세요.
             </div>
             <button
               onClick={() => onNavigate('CONTACT')}

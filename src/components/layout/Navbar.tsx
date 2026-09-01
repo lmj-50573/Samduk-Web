@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { NavSection, BrandId } from '../../types';
 import { BRANDS_DATA } from '../../data/samdukData';
@@ -47,10 +47,28 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [brandsDropdownOpen, setBrandsDropdownOpen] = useState(false);
 
+  // 스크롤을 일정 이상 내리면 상단 바를 알약 모양으로 축소
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled((prev) => {
+        if (prev) {
+          // 이미 알약 모드면, 위로 많이 올라갔을 때만 원래대로 돌아감 (깜빡임 방지)
+          return window.scrollY > 20;
+        }
+        // 아직 원래 모드면, 어느 정도 내려가야 알약 모드로 전환
+        return window.scrollY > 80;
+      });
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const navItems: { label: string; section: NavSection; subtitle?: string }[] = [
     { label: 'SHOP', section: 'SHOP', subtitle: '전체 제품 카탈로그' },
     { label: 'BRANDS', section: 'BRANDS', subtitle: '3대 파트너 브랜드' },
-    { label: 'LOOKBOOK', section: 'LOOKBOOK', subtitle: '에디토리얼 매거진' },
     { label: 'STORY', section: 'STORY', subtitle: '제조 혁신과 헤리티지' },
     { label: 'NEWS', section: 'NEWS', subtitle: '최신 기업 소식' },
     { label: 'CONTACT', section: 'CONTACT', subtitle: '제휴 및 상담' },
@@ -66,36 +84,63 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-neutral-200 transition-all duration-200">
-      {/* Top micro-bar: Heritage & official notice */}
-      <div className="bg-neutral-900 text-neutral-300 text-xs py-1.5 px-4 sm:px-8 flex justify-between items-center">
-        <div className="flex-1 text-center">
-          <span className="font-medium tracking-tight">
-            대한민국 1등 안전화 제조기업 삼덕통상 · 공식 브랜드 통합 플랫폼
-          </span>
-        </div>
-        <div className="text-[11px] font-mono text-neutral-400 shrink-0 hidden sm:block">
-          | Since 1997
+    <header
+      className={`sticky top-0 z-50 w-full border-b ${
+        isScrolled ? 'bg-transparent border-transparent' : 'bg-white/95 backdrop-blur-md border-neutral-200'
+      }`}
+      style={{ transition: 'background-color 0.5s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.5s cubic-bezier(0.22, 1, 0.36, 1)' }}
+    >
+      {/* Top micro-bar: Heritage & official notice. 스크롤하면 접혀서 사라짐 */}
+      <div
+        className={`overflow-hidden bg-neutral-900 text-neutral-300 text-xs ${
+          isScrolled ? 'max-h-0 opacity-0' : 'max-h-10 opacity-100'
+        }`}
+        style={{ transition: 'max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1)' }}
+      >
+        <div className="py-1.5 px-4 sm:px-8 flex justify-between items-center">
+          <div className="flex-1 text-center">
+            <span className="font-medium tracking-tight">
+              WANTU · 신뢰할 수 있는 브랜드를 한곳에, 프리미엄 풋웨어 플랫폼
+            </span>
+          </div>
+          <div className="text-[11px] font-mono text-neutral-400 shrink-0 hidden sm:block">
+            | Since 1997
+          </div>
         </div>
       </div>
 
-      {/* Main navigation header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      {/* Main navigation header: 스크롤하면 폭이 좁아지고 둥근 알약 모양으로 축소 */}
+      <div
+        className={`flex items-center justify-between ${
+          isScrolled
+            ? 'max-w-6xl h-16 px-6 mt-3 mb-2 mx-4 sm:mx-auto rounded-full bg-white shadow-xl shadow-neutral-900/10 border border-neutral-200'
+            : 'max-w-7xl h-20 px-4 sm:px-6 lg:px-8 mt-0 mb-0 mx-auto rounded-none border border-transparent'
+        }`}
+        style={{ transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)' }}
+      >
         {/* Brand Logo & Tagline */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => onNavigate('HOME')}
             className="flex items-center space-x-2.5 text-left group cursor-pointer focus:outline-none"
           >
-            <div className="w-9 h-9 bg-neutral-900 text-white flex items-center justify-center font-black text-lg tracking-tighter rounded-sm group-hover:bg-blue-600 transition-colors">
+            <div className={`bg-neutral-900 text-white flex items-center justify-center font-black tracking-tighter rounded-sm group-hover:bg-blue-600 transition-all duration-300 ${isScrolled ? 'w-7 h-7 text-sm' : 'w-9 h-9 text-lg'}`}>
               W
             </div>
             <div>
-               <div className="text-xl font-black tracking-normal text-neutral-900 flex items-center">
+               <div className={`font-black tracking-normal text-neutral-900 flex items-center transition-all duration-300 ${isScrolled ? 'text-base' : 'text-xl'}`}>
                     WANT<span className="group-hover:text-blue-600 transition-colors">U</span>
                </div>
-              <div className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold -mt-0.5">
-                안전화 제조기업
+              <div
+                className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold overflow-hidden"
+                style={{
+                  maxHeight: isScrolled ? '0px' : '14px',
+                  opacity: isScrolled ? 0 : 1,
+                  marginTop: isScrolled ? '0px' : '-2px',
+                  transition: 'max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1), margin-top 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                FOOTWEAR PLATFORM
               </div>
             </div>
           </button>
@@ -140,7 +185,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {brandsDropdownOpen && (
               <div className="absolute right-0 mt-1 w-64 bg-white rounded-xl shadow-2xl border border-neutral-200 p-2 z-50">
                 <div className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 px-3 py-1.5 border-b border-neutral-100">
-                  SAMDUK BRANDS OFFICIAL STORE
+                  WANTU OFFICIAL BRAND STORE
                 </div>
                 <div className="py-1 space-y-1">
                   {BRANDS_DATA.map((brand) => (
@@ -185,13 +230,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </nav>
 {/* Right Utility Icons (Search, Wishlist, Account, Mobile menu toggle) */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-3 shrink-0">
           <button
             onClick={onOpenSearch}
-            className="h-9 px-3.5 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-colors cursor-pointer flex items-center space-x-1.5 text-neutral-600"
+            className="h-9 px-3.5 bg-neutral-100 hover:bg-neutral-200 rounded-full transition-colors cursor-pointer flex items-center space-x-1.5 text-neutral-600 shrink-0 whitespace-nowrap"
             title="모델 검색"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-4 h-4 shrink-0" />
             <span className="text-xs font-medium">검색</span>
           </button>
 
@@ -323,7 +368,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 pt-3 pb-6 space-y-4 shadow-xl">
+        <div className="lg:hidden bg-white border-b border-neutral-200 px-4 pt-3 pb-6 space-y-4 shadow-xl rounded-b-2xl">
           <div className="grid grid-cols-2 gap-2">
             {navItems.map((item) => (
               <button

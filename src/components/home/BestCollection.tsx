@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ShoeProduct, NavSection } from '../../types';
 import { PRODUCTS_DATA } from '../../data/samdukData';
 import { Eye, Heart, ArrowRight, Award, Check } from 'lucide-react';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 
 interface BestCollectionProps {
@@ -21,6 +22,26 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
 }) => {
     const bestProducts = products.filter((p) => p.isBest);
     const [activeTab, setActiveTab] = useState<'ALL' | 'Safety' | 'Outdoor' | 'Running' | 'Lifestyle'>('ALL');
+
+    // 액센트 선이 스크롤해서 보일 때 왼쪽에서 오른쪽으로 그려지는 효과를 위한 감지
+    const accentLineRef = useRef<HTMLDivElement>(null);
+    const [isLineDrawn, setIsLineDrawn] = useState(false);
+
+    useEffect(() => {
+      const el = accentLineRef.current;
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsLineDrawn(true);
+            observer.unobserve(el);
+          }
+        },
+        { threshold: 0.5 }
+      );
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, []);
 
     const filteredProducts = activeTab === 'ALL'
         ? bestProducts.slice(0, 4)
@@ -57,40 +78,49 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
     <section className="py-24 bg-neutral-100 text-neutral-900 border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
-          <div>
-            
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
-              BEST COLLECTION
-            </h2>
-            <p className="text-neutral-500 text-sm mt-2 max-w-xl">
-                          삼덕통상이 직접 디자인한 안전화로 K2_SAFETY와 함꼐 최고의 안전화를 만나보세요. <br></br>
-                          다양한 카테고리의 안전화 중에서 여러분의 스타일과 필요에 맞는 제품을 선택할 수 있습니다.
-            </p>
-          </div>
+        <ScrollReveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
 
-          {/* Category Pill Tabs */}
-          <div className="mt-6 md:mt-0 flex flex-wrap gap-1.5 bg-neutral-200/80 p-1.5 rounded-xl">
-            {(['ALL', 'Safety', 'Outdoor', 'Running', 'Lifestyle'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
-                  activeTab === tab
-                    ? 'bg-neutral-900 text-white shadow-sm'
-                    : 'text-neutral-600 hover:text-neutral-900'
-                }`}
-              >
-                {tab === 'ALL' ? 'ALL BEST' : tab}
-              </button>
-            ))}
+              <h2 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
+                BEST COLLECTION
+              </h2>
+              <div className="flex items-center gap-2.5 mt-3">
+                <span
+                  ref={accentLineRef}
+                  className="w-7 h-0.5 bg-blue-600 shrink-0 origin-left transition-transform duration-700 ease-out"
+                  style={{ transform: isLineDrawn ? 'scaleX(1)' : 'scaleX(0)' }}
+                />
+                <p className="text-sm sm:text-base font-bold text-neutral-700 tracking-tight">
+                  <span className="text-blue-600">안전</span>과 <span className="text-blue-600">스타일</span>, 둘 다 포기하지 않는 선택.
+                </p>
+              </div>
+            </div>
+
+            {/* Category Pill Tabs */}
+            <div className="mt-6 md:mt-0 flex items-center gap-1.5 bg-neutral-200/80 p-1.5 rounded-xl overflow-x-auto scrollbar-none">
+              {(['ALL', 'Safety', 'Outdoor', 'Running', 'Lifestyle'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer shrink-0 whitespace-nowrap ${
+                    activeTab === tab
+                      ? 'bg-neutral-900 text-white shadow-sm'
+                      : 'text-neutral-600 hover:text-neutral-900'
+                  }`}
+                >
+                  {tab === 'ALL' ? 'ALL BEST' : tab}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Asymmetrical Editorial Showcase (1 Hero Left + 3 Stack Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {heroBest && (
-            <div className="lg:col-span-7 bg-white rounded-3xl overflow-hidden border border-neutral-200 flex flex-col justify-between shadow-md hover:shadow-2xl transition-all group relative">
+            <ScrollReveal className="lg:col-span-7" delayMs={100}>
+            <div className="bg-white rounded-3xl overflow-hidden border border-neutral-200 flex flex-col justify-between shadow-md hover:shadow-2xl transition-all group relative h-full">
               <div className="relative aspect-16/10 bg-neutral-950 overflow-hidden">
                 <img
                   src={heroBest.image}
@@ -170,6 +200,7 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
                 </div>
               </div>
             </div>
+            </ScrollReveal>
           )}
 
           {/* 3 Secondary Best Cards (5 cols) */}
@@ -177,8 +208,8 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
             {sideBest.map((product, idx) => {
               const isSaved = wishlist.includes(product.id);
               return (
+                  <ScrollReveal key={product.id} delayMs={150 + idx * 100}>
                   <div
-                      key={product.id}
                       onClick={() => handlePromoteToHero(product.id)}
                       className="group bg-white rounded-2xl p-4 border border-neutral-200 hover:border-blue-500 transition-all flex items-center space-x-4 shadow-sm hover:shadow-lg cursor-pointer"
                   >
@@ -245,6 +276,7 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
                     </div>
                   </div>
                 </div>
+                  </ScrollReveal>
               );
             })}
           </div>

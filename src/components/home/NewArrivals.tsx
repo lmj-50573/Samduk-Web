@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ShoeProduct, NavSection } from '../../types';
 import { PRODUCTS_DATA } from '../../data/samdukData';
 import { Eye, Heart, ArrowRight, Sparkles } from 'lucide-react';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 interface NewArrivalsProps {
   onOpenQuickView: (product: ShoeProduct) => void;
@@ -18,43 +19,71 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({
 }) => {
   const newProducts = PRODUCTS_DATA.filter((p) => p.isNew).slice(0, 4);
 
+  // 액센트 선이 스크롤해서 보일 때 왼쪽에서 오른쪽으로 그려지는 효과를 위한 감지
+  const accentLineRef = useRef<HTMLDivElement>(null);
+  const [isLineDrawn, setIsLineDrawn] = useState(false);
+
+  useEffect(() => {
+    const el = accentLineRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsLineDrawn(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section className="py-24 bg-white text-neutral-900 border-b border-neutral-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14">
-          <div>
+        <ScrollReveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-14">
+            <div>
 
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
-              NEW ARRIVALS
-            </h2>
-            <p className="text-neutral-500 text-sm mt-2 max-w-xl">
-              삼덕 바이오메카닉스 연구소의 2026 최신 혁신 라인업.<br />
-              고어텍스 방수 부티와 신규 BOA 다이얼이 탑재된 차세대 슈즈를 만나보세요.
-            </p>
+              <h2 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
+                NEW ARRIVALS
+              </h2>
+              <div className="flex items-center gap-2.5 mt-3">
+                <span
+                  ref={accentLineRef}
+                  className="w-7 h-0.5 bg-blue-600 shrink-0 origin-left transition-transform duration-700 ease-out"
+                  style={{ transform: isLineDrawn ? 'scaleX(1)' : 'scaleX(0)' }}
+                />
+                <p className="text-sm sm:text-base font-bold text-neutral-700 tracking-tight">
+                  <span className="text-blue-600">새로운 기술</span>, <span className="text-blue-600">새로운 편안함</span>.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => onNavigate('SHOP')}
+              className="mt-4 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 bg-neutral-900 hover:bg-blue-600 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shrink-0"
+            >
+              <span>SHOP ALL NEW RELEASES</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
-
-          <button
-            onClick={() => onNavigate('SHOP')}
-            className="mt-4 md:mt-0 inline-flex items-center space-x-2 px-6 py-3 bg-neutral-900 hover:bg-blue-600 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer shrink-0"
-          >
-            <span>SHOP ALL NEW RELEASES</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+        </ScrollReveal>
 
         {/* 4 Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newProducts.map((product) => {
+          {newProducts.map((product, idx) => {
             const isSaved = wishlist.includes(product.id);
             const discountPercent = product.originalPrice
               ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
               : 0;
 
             return (
+              <ScrollReveal key={product.id} delayMs={idx * 100}>
               <div
-                key={product.id}
-                className="group relative bg-white border border-neutral-200 hover:border-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-sm hover:shadow-xl"
+                className="group relative bg-white border border-neutral-200 hover:border-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-sm hover:shadow-xl h-full"
               >
                 {/* Product Image Area */}
                 <div className="relative aspect-4/3 bg-neutral-100 overflow-hidden">
@@ -145,6 +174,7 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({
                   </div>
                 </div>
               </div>
+              </ScrollReveal>
             );
           })}
         </div>

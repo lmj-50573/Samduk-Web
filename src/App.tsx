@@ -24,9 +24,24 @@ import { AuthProvider } from './contexts/AuthContext';
 import { AuthModal } from './components/auth/AuthModal';
 import { MyPage } from './components/mypage/MyPage';
 import { AdminPage } from './components/admin/AdminPage';
+import { CustomCursor } from './components/common/CustomCursor';
+import { supabase } from './lib/supabase';
 
 export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+useEffect(() => {
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setCurrentUser(session?.user ?? null);
+  });
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setCurrentUser(session?.user ?? null);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
   const [activeSection, setActiveSection] = useState<NavSection>('HOME');
   const [selectedBrandFilter, setSelectedBrandFilter] = useState<BrandId | 'ALL'>('ALL');
   
@@ -101,18 +116,18 @@ export default function App() {
   });
 
   // Wishlist state saved in localStorage
-  const [wishlist, setWishlist] = useState<string[]>(() => {
+const [wishlist, setWishlist] = useState<string[]>(() => {
     try {
-      const saved = localStorage.getItem('samduk_wishlist');
-      return saved ? JSON.parse(saved) : ['stelth-s6-boa-gtx', 'treksta-kobra-970-gtx'];
+      const saved = localStorage.getItem('samduk_wishlist_v2');
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return ['stelth-s6-boa-gtx', 'treksta-kobra-970-gtx'];
+      return [];
     }
   });
 
   useEffect(() => {
     try {
-      localStorage.setItem('samduk_wishlist', JSON.stringify(wishlist));
+      localStorage.setItem('samduk_wishlist_v2', JSON.stringify(wishlist));
     } catch {
       // ignore
     }
@@ -125,6 +140,57 @@ export default function App() {
       // ignore
     }
   }, [customPhotos]);
+
+  // Supabase에 등록된 상품을 불러와서 기존 상품 목록에 합치기
+useEffect(() => {
+  const fetchDbProducts = async () => {
+    const { data, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('상품 불러오기 실패:', error);
+      return;
+    }
+    if (!data) return;
+
+    const mapped: ShoeProduct[] = data.map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      nameKo: p.name_ko || p.name,
+      brand: p.brand,
+      category: p.category,
+      price: p.price,
+      originalPrice: p.original_price || undefined,
+      isNew: p.is_new,
+      isBest: p.is_best,
+      rating: 5.0,
+      reviewCount: 0,
+      image: p.image || '',
+      gallery: p.image ? [p.image] : [],
+      shortDescription: p.short_description || '',
+      specs: {
+        upper: '정보 준비중',
+        sole: '정보 준비중',
+        weight: '정보 준비중',
+        closureSystem: '정보 준비중',
+      },
+      technologies: [],
+      colors: ['#171717'],
+      sizes: [250, 255, 260, 265, 270, 275, 280],
+      officialStoreUrl: '#',
+    }));
+
+    setProducts((prev) => {
+      const existingIds = new Set(prev.map((p) => p.id));
+      const newOnes = mapped.filter((p) => !existingIds.has(p.id));
+      return [...newOnes, ...prev];
+    });
+  };
+
+  fetchDbProducts();
+}, []);
     // 브라우저 뒤로가기/앞으로가기 버튼 클릭 시 이전 섹션으로 복원
     useEffect(() => {
         const handlePopState = (event: PopStateEvent) => {
@@ -171,6 +237,10 @@ export default function App() {
   };
 
   const handleToggleWishlist = (productId: string) => {
+      if (!currentUser) {
+    setIsAuthModalOpen(true);
+    return;
+  }
     setWishlist((prev) =>
       prev.includes(productId)
         ? prev.filter((id) => id !== productId)
@@ -269,6 +339,7 @@ export default function App() {
   return (
     <AuthProvider>
     <div className="min-h-screen flex flex-col bg-neutral-950 text-white font-sans antialiased selection:bg-blue-600 selection:text-white">
+      <CustomCursor />
       {/* Global Navigation Navbar */}
       <Navbar
         currentSection={activeSection}

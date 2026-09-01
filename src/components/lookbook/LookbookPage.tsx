@@ -35,7 +35,7 @@ export const LookbookPage: React.FC<LookbookPageProps> = ({
           <div>
             <div className="inline-flex items-center space-x-2 text-xs font-mono font-bold tracking-widest text-blue-500 uppercase mb-2">
               <BookOpen className="w-3.5 h-3.5" />
-              <span>SAMDUK FOOTWEAR PLATFORM · EDITORIAL ARCHIVE</span>
+              <span>WANTU · EDITORIAL ARCHIVE</span>
             </div>
             <h1 className="text-4xl sm:text-6xl font-black tracking-tight uppercase">
               LOOKBOOK ISSUES

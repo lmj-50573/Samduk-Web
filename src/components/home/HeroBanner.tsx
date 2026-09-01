@@ -77,14 +77,52 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
   return (
     <section className="relative w-full h-[78vh] min-h-[560px] max-h-[850px] bg-neutral-950 text-white overflow-hidden select-none">
+      {/* Animation keyframes & helper classes for hero text entrance + shimmer */}
+      <style>{`
+        @keyframes heroFadeUp {
+          from { opacity: 0; transform: translateY(22px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroColorShift {
+          0% { background-position: 0% center; }
+          100% { background-position: 100% center; }
+        }
+        .hero-line {
+          opacity: 0;
+          animation: heroFadeUp 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .hero-shimmer-text {
+          background-image: linear-gradient(
+            90deg,
+            #ffffff 0%,
+            #93c5fd 20%,
+            #ffffff 40%,
+            #60a5fa 60%,
+            #ffffff 80%,
+            #93c5fd 100%
+          );
+          background-size: 300% auto;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: transparent;
+          animation: heroColorShift 9s linear infinite 1.8s;
+        }
+      `}</style>
+
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={slide.image}
-          alt={`${slide.titleEnMain} ${slide.titleEnSub}`}
-          referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-center transition-all duration-1000 scale-105 brightness-60"
-        />
+        {slides.map((s, i) => (
+          <img
+            key={s.id}
+            src={s.image}
+            alt={`${s.titleEnMain} ${s.titleEnSub}`}
+            referrerPolicy="no-referrer"
+            className={`absolute inset-0 w-full h-full object-cover object-center scale-105 brightness-60 transition-opacity duration-[1600ms] ease-in-out ${
+              i === activeSlide ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/90 via-neutral-950/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-90" />
       </div>
@@ -94,36 +132,39 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               
 
         {/* Center headlines & buttons */}
-        <div className="max-w-3xl space-y-5 my-auto pl-1 sm:pl-3">
+        {/* key={slide.id} forces this block to remount on every slide change, so the entrance animation replays each time */}
+        <div key={slide.id} className="max-w-3xl space-y-5 my-auto pl-1 sm:pl-3">
           <div className="inline-flex items-center space-x-2 text-blue-400 font-mono text-xs tracking-widest uppercase font-bold">
             
             
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.08] uppercase text-white">
-            {slide.titleEnMain}
-            <br />
-            {slide.titleEnSub}
-          </h1>
+          <div className="hero-line" style={{ animationDelay: '0s' }}>
+            <h1 className="hero-shimmer-text text-3xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.08] uppercase">
+              {slide.titleEnMain}
+              <br />
+              {slide.titleEnSub}
+            </h1>
 
-          <p className="text-xl sm:text-2xl font-bold text-neutral-100 tracking-tight break-keep">
-            {slide.titleKo}
-          </p>
+            <p className="text-xl sm:text-2xl font-bold text-neutral-100 tracking-tight break-keep mt-5">
+              {slide.titleKo}
+            </p>
 
-          <p className="text-sm sm:text-base text-neutral-300 max-w-2xl leading-relaxed font-light break-keep whitespace-pre-line">
-            {slide.subtitle}
-          </p>
+            <p className="text-sm sm:text-base text-neutral-300 max-w-2xl leading-relaxed font-light break-keep whitespace-pre-line mt-5">
+              {slide.subtitle}
+            </p>
 
-          {/* Technology spec pills */}
-          <div className="flex flex-wrap gap-2 pt-1">
-            {slide.specs.map((spec, i) => (
-              <span
-                key={i}
-                className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-md text-[11px] font-mono font-bold text-neutral-200"
-              >
-                {spec}
-              </span>
-            ))}
+            {/* Technology spec pills */}
+            <div className="flex flex-wrap gap-2 pt-1 mt-5">
+              {slide.specs.map((spec, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/10 rounded-md text-[11px] font-mono font-bold text-neutral-200"
+                >
+                  {spec}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* CTA Button */}
@@ -165,4 +206,3 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
     </section>
   );
 };
-

@@ -27,6 +27,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'FEATURED' | 'NEW' | 'PRICE_ASC' | 'PRICE_DESC' | 'RATING'>('FEATURED');
   const [techFilter, setTechFilter] = useState<string | 'ALL'>('ALL');
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
   const categories: { label: string; value: ShoeCategory }[] = [
     { label: '전체 (ALL)', value: 'ALL' },
@@ -74,7 +75,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <span className="text-xs font-mono font-bold tracking-widest text-blue-500 uppercase block mb-2">
-                SAMDUK FOOTWEAR PLATFORM · COMPLETE CATALOG
+                WANTU · CURATED FOOTWEAR CATALOG
               </span>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight uppercase">
                 {activeBrandInfo ? activeBrandInfo.name : 'ALL FOOTWEAR CATALOG'}
@@ -82,7 +83,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
               <p className="text-neutral-400 text-sm mt-2 max-w-2xl">
                 {activeBrandInfo
                   ? activeBrandInfo.description
-                  : '산업 안전화 K2 SAFETY, 프랑스 퍼포먼스 아웃도어 EIDER, 히말라야 알파인 BLACK YAK 삼덕통상 핵심 3대 파트너 브랜드 전 제품을 탐색하고 공식 스토어에서 확인하세요.'}
+                  : 'K2 SAFETY, EIDER, BLACK YAK — 신뢰할 수 있는 3대 브랜드를 한곳에서 만나보세요.'}
               </p>
             </div>
 
@@ -100,178 +101,187 @@ export const ShopPage: React.FC<ShopPageProps> = ({
 
 
 {/* Main filter bar */}
-<div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200 py-6 px-4 sm:px-6 lg:px-8 shadow-sm">
+<div className="bg-white border-b border-neutral-200 px-4 sm:px-6 lg:px-8">
   <div className="max-w-7xl mx-auto">
-    <div className="bg-neutral-50 rounded-2xl border border-neutral-200/80 p-5 space-y-5">
 
-      {/* Row 1: Brand Tabs & Search/Sort Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-neutral-200">
-        {/* Brand Filter Tabs */}
-        <div className="flex items-center space-x-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
-          <span className="text-[11px] font-mono font-bold uppercase text-neutral-400 mr-1 shrink-0">
-            BRAND:
-          </span>
+    {/* Brand Tabs: underline style, centered */}
+    <div className="relative border-b-2 border-neutral-100 pt-5">
+      <div className="flex items-center justify-center space-x-6 overflow-x-auto scrollbar-none px-4">
+        <button
+          onClick={() => setSelectedBrand('ALL')}
+          className={`pb-3 text-sm font-extrabold whitespace-nowrap shrink-0 border-b-2 -mb-0.5 transition-colors cursor-pointer ${
+            selectedBrand === 'ALL'
+              ? 'text-neutral-900 border-neutral-900'
+              : 'text-neutral-400 border-transparent hover:text-neutral-600'
+          }`}
+        >
+          전체 브랜드
+        </button>
+        {BRANDS_DATA.map((brand) => (
           <button
-            onClick={() => setSelectedBrand('ALL')}
-            className={`h-9 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center space-x-1.5 ${
-              selectedBrand === 'ALL'
-                ? 'bg-neutral-900 text-white shadow-sm ring-1 ring-neutral-900'
-                : 'bg-white text-neutral-600 hover:bg-neutral-100 border border-neutral-200'
+            key={brand.id}
+            onClick={() => setSelectedBrand(brand.id)}
+            className={`pb-3 text-sm font-extrabold whitespace-nowrap shrink-0 border-b-2 -mb-0.5 transition-colors cursor-pointer ${
+              selectedBrand === brand.id
+                ? 'text-neutral-900 border-neutral-900'
+                : 'text-neutral-400 border-transparent hover:text-neutral-600'
             }`}
           >
-            <span>전체 브랜드</span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${selectedBrand === 'ALL' ? 'bg-neutral-800 text-neutral-300' : 'bg-neutral-100 text-neutral-600'}`}>
-              3
-            </span>
+            {brand.name}
           </button>
-          {BRANDS_DATA.map((brand) => (
+        ))}
+      </div>
+
+      <button
+        onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+        className="hidden sm:flex absolute right-0 top-5 items-center space-x-1 text-xs font-bold text-neutral-500 hover:text-blue-600 cursor-pointer"
+      >
+        <SlidersHorizontal className="w-3.5 h-3.5" />
+        <span>{isFilterExpanded ? '필터 접기' : '상세 필터'}</span>
+      </button>
+    </div>
+
+    {/* Filter toggle, mobile-only row (since it's hidden above on small screens) */}
+    <div className="flex sm:hidden justify-end pt-3">
+      <button
+        onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+        className="flex items-center space-x-1 text-xs font-bold text-neutral-500 hover:text-blue-600 cursor-pointer"
+      >
+        <SlidersHorizontal className="w-3.5 h-3.5" />
+        <span>{isFilterExpanded ? '필터 접기' : '상세 필터'}</span>
+      </button>
+    </div>
+
+    {isFilterExpanded && (
+      <div className="pt-4">
+        {/* Category chips */}
+        <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-3">
+          {categories.map((cat) => (
             <button
-              key={brand.id}
-              onClick={() => setSelectedBrand(brand.id)}
-              className={`h-9 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                selectedBrand === brand.id
-                  ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-600'
-                  : 'bg-white text-neutral-700 hover:bg-neutral-100 border border-neutral-200'
+              key={cat.value}
+              onClick={() => setSelectedCategory(cat.value)}
+              className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                selectedCategory === cat.value
+                  ? 'bg-neutral-900 text-white'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
               }`}
             >
-              {brand.name}
+              {cat.label}
             </button>
           ))}
         </div>
 
-        {/* Search & Sort actions */}
-        <div className="flex items-center space-x-3 shrink-0">
-          <div className="relative flex-1 sm:w-60">
-            <input
-              type="text"
-              placeholder="모델명, BOA, GORE-TEX 검색"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-9 bg-white border border-neutral-200 rounded-xl pl-9 pr-8 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600 transition-colors"
-            />
-            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="h-9 bg-white border border-neutral-200 rounded-xl px-3 text-xs font-bold text-neutral-800 focus:outline-none focus:border-blue-600 cursor-pointer"
-          >
-            <option value="FEATURED">추천 베스트순</option>
-            <option value="NEW">신상품순 (2026)</option>
-            <option value="PRICE_ASC">가격 낮은순</option>
-            <option value="PRICE_DESC">가격 높은순</option>
-            <option value="RATING">고객 평점순</option>
-          </select>
+        {/* Tech chips */}
+        <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-4">
+          {technologies.map((tech) => (
+            <button
+              key={tech}
+              onClick={() => setTechFilter(tech)}
+              className={`px-3 py-1.5 rounded-full font-mono font-bold text-[11px] transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
+                techFilter === tech
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+              }`}
+            >
+              {tech === 'ALL' ? 'ALL TECH' : tech}
+            </button>
+          ))}
         </div>
       </div>
+    )}
 
-      {/* Row 2: Category Filter Bar */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
-        <span className="text-[11px] font-mono font-bold uppercase text-neutral-400 mr-1 shrink-0">
-          CATEGORY:
-        </span>
-        {categories.map((cat) => (
+    {/* Search & Sort row */}
+    <div className="flex items-center gap-3 py-4">
+      <div className="relative flex-1">
+        <input
+          type="text"
+          placeholder="모델명, BOA, GORE-TEX 검색"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full h-10 bg-white border border-neutral-200 rounded-lg pl-9 pr-8 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600 transition-colors"
+        />
+        <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        {searchQuery && (
           <button
-            key={cat.value}
-            onClick={() => setSelectedCategory(cat.value)}
-            className={`h-8 px-3.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-              selectedCategory === cat.value
-                ? 'bg-neutral-800 text-white shadow-sm'
-                : 'text-neutral-600 bg-white hover:bg-neutral-100 border border-neutral-200'
-            }`}
+            onClick={() => setSearchQuery('')}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700 cursor-pointer"
           >
-            {cat.label}
+            <X className="w-3.5 h-3.5" />
           </button>
-        ))}
+        )}
       </div>
 
-      {/* Row 3: Technology Filter Badges */}
-      <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none">
-        <span className="text-[11px] font-mono font-bold uppercase text-neutral-400 mr-1 shrink-0">
-          TECH:
-        </span>
-        {technologies.map((tech) => (
-          <button
-            key={tech}
-            onClick={() => setTechFilter(tech)}
-            className={`h-7 px-2.5 rounded-md font-mono font-bold text-[11px] transition-all cursor-pointer whitespace-nowrap ${
-              techFilter === tech
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-white text-neutral-500 hover:bg-neutral-100 border border-neutral-200'
-            }`}
-          >
-            {tech === 'ALL' ? 'ALL TECH' : tech}
-          </button>
-        ))}
-      </div>
-
-      {/* Active Filters Bar if any filter is set */}
-      {(selectedBrand !== 'ALL' || selectedCategory !== 'ALL' || techFilter !== 'ALL' || searchQuery) && (
-        <div className="pt-4 flex flex-wrap items-center gap-2 border-t border-neutral-200 text-xs">
-          <span className="text-neutral-400 text-[11px] font-bold">적용된 필터:</span>
-          
-          {selectedBrand !== 'ALL' && (
-            <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg border border-blue-200">
-              <span>{BRANDS_DATA.find(b => b.id === selectedBrand)?.name}</span>
-              <button onClick={() => setSelectedBrand('ALL')} className="hover:text-blue-900 cursor-pointer">
-                <X className="w-3 h-3 ml-0.5" />
-              </button>
-            </span>
-          )}
-
-          {selectedCategory !== 'ALL' && (
-            <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-white text-neutral-800 font-bold rounded-lg border border-neutral-300">
-              <span>{categories.find(c => c.value === selectedCategory)?.label}</span>
-              <button onClick={() => setSelectedCategory('ALL')} className="hover:text-neutral-900 cursor-pointer">
-                <X className="w-3 h-3 ml-0.5" />
-              </button>
-            </span>
-          )}
-
-          {techFilter !== 'ALL' && (
-            <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 text-blue-800 font-mono font-bold rounded-lg border border-blue-200">
-              <span>{techFilter}</span>
-              <button onClick={() => setTechFilter('ALL')} className="hover:text-blue-900 cursor-pointer">
-                <X className="w-3 h-3 ml-0.5" />
-              </button>
-            </span>
-          )}
-
-          {searchQuery && (
-            <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-amber-50 text-amber-800 font-bold rounded-lg border border-amber-200">
-              <span>"{searchQuery}"</span>
-              <button onClick={() => setSearchQuery('')} className="hover:text-amber-900 cursor-pointer">
-                <X className="w-3 h-3 ml-0.5" />
-              </button>
-            </span>
-          )}
-
-          <button
-            onClick={() => {
-              setSelectedBrand('ALL');
-              setSelectedCategory('ALL');
-              setTechFilter('ALL');
-              setSearchQuery('');
-            }}
-            className="text-blue-600 hover:text-blue-800 font-bold text-[11px] underline ml-auto cursor-pointer"
-          >
-            필터 전체 초기화
-          </button>
-        </div>
-      )}
-
+      <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value as any)}
+        className="h-10 bg-white border border-neutral-200 rounded-lg px-3 text-xs font-bold text-neutral-800 focus:outline-none focus:border-blue-600 cursor-pointer shrink-0"
+      >
+        <option value="FEATURED">추천 베스트순</option>
+        <option value="NEW">신상품순 (2026)</option>
+        <option value="PRICE_ASC">가격 낮은순</option>
+        <option value="PRICE_DESC">가격 높은순</option>
+        <option value="RATING">고객 평점순</option>
+      </select>
     </div>
+
+    {/* Active Filters Bar if any filter is set */}
+    {(selectedBrand !== 'ALL' || selectedCategory !== 'ALL' || techFilter !== 'ALL' || searchQuery) && (
+      <div className="pb-4 flex flex-wrap items-center gap-2 text-xs">
+        <span className="text-neutral-400 text-[11px] font-bold">적용된 필터:</span>
+
+        {selectedBrand !== 'ALL' && (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg border border-blue-200">
+            <span>{BRANDS_DATA.find(b => b.id === selectedBrand)?.name}</span>
+            <button onClick={() => setSelectedBrand('ALL')} className="hover:text-blue-900 cursor-pointer">
+              <X className="w-3 h-3 ml-0.5" />
+            </button>
+          </span>
+        )}
+
+        {selectedCategory !== 'ALL' && (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-white text-neutral-800 font-bold rounded-lg border border-neutral-300">
+            <span>{categories.find(c => c.value === selectedCategory)?.label}</span>
+            <button onClick={() => setSelectedCategory('ALL')} className="hover:text-neutral-900 cursor-pointer">
+              <X className="w-3 h-3 ml-0.5" />
+            </button>
+          </span>
+        )}
+
+        {techFilter !== 'ALL' && (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 text-blue-800 font-mono font-bold rounded-lg border border-blue-200">
+            <span>{techFilter}</span>
+            <button onClick={() => setTechFilter('ALL')} className="hover:text-blue-900 cursor-pointer">
+              <X className="w-3 h-3 ml-0.5" />
+            </button>
+          </span>
+        )}
+
+        {searchQuery && (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 bg-amber-50 text-amber-800 font-bold rounded-lg border border-amber-200">
+            <span>"{searchQuery}"</span>
+            <button onClick={() => setSearchQuery('')} className="hover:text-amber-900 cursor-pointer">
+              <X className="w-3 h-3 ml-0.5" />
+            </button>
+          </span>
+        )}
+
+        <button
+          onClick={() => {
+            setSelectedBrand('ALL');
+            setSelectedCategory('ALL');
+            setTechFilter('ALL');
+            setSearchQuery('');
+          }}
+          className="text-blue-600 hover:text-blue-800 font-bold text-[11px] underline ml-auto cursor-pointer"
+        >
+          필터 전체 초기화
+        </button>
+      </div>
+    )}
+
   </div>
 </div>
+
 
       {/* Catalog Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
@@ -295,7 +305,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
             )}
           </div>
           <div>
-            SAMDUK CERTIFIED MANUFACTURING
+            WANTU CURATED CATALOG
           </div>
         </div>
 

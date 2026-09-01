@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Plus, Package, Upload, X, Trash2, Loader2 } from 'lucide-react';
+import { ShieldCheck, Plus, Package, Upload, X, Trash2, Loader2, Pencil } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -27,6 +27,9 @@ export const AdminPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [showForm, setShowForm] = useState(false);
+
+  // 수정 중인 상품의 id (null이면 신규 등록 모드)
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Form fields
   const [name, setName] = useState('');
@@ -76,6 +79,26 @@ export const AdminPage: React.FC = () => {
     setIsNew(false);
     setIsBest(false);
     setFormError('');
+    setEditingId(null);
+  };
+
+  // 목록에서 상품을 눌렀을 때: 그 상품 정보를 폼에 채워넣고 수정 모드로 전환
+  const handleEditClick = (p: Product) => {
+    setEditingId(p.id);
+    setName(p.name);
+    setNameKo(p.name_ko || '');
+    setBrand(p.brand);
+    setCategory(p.category);
+    setPrice(String(p.price));
+    setOriginalPrice(p.original_price ? String(p.original_price) : '');
+    setDescription(p.short_description || '');
+    setImageFile(null);
+    setImagePreview(p.image);
+    setIsNew(p.is_new);
+    setIsBest(p.is_best);
+    setFormError('');
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,9 +120,9 @@ export const AdminPage: React.FC = () => {
 
     setSubmitting(true);
 
-    let imageUrl: string | null = null;
+    // 새로 고른 이미지가 있으면 업로드하고, 없으면 기존 이미지 URL을 그대로 씀 (수정 모드일 때)
+    let imageUrl: string | null = editingId ? imagePreview : null;
 
-    // 이미지 업로드
     if (imageFile) {
       const fileExt = imageFile.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
@@ -121,8 +144,7 @@ export const AdminPage: React.FC = () => {
       imageUrl = publicUrlData.publicUrl;
     }
 
-    // 상품 등록
-    const { error: insertError } = await supabase.from('products').insert({
+    const payload = {
       name,
       name_ko: nameKo || null,
       brand,
@@ -133,17 +155,37 @@ export const AdminPage: React.FC = () => {
       short_description: description || null,
       is_new: isNew,
       is_best: isBest,
-      created_by: profile?.id,
-    });
+    };
 
-    if (insertError) {
-      setFormError('상품 등록에 실패했어요: ' + insertError.message);
+    if (editingId) {
+      // 수정 모드: 기존 row를 update
+      const { error: updateError } = await supabase
+        .from('products')
+        .update(payload)
+        .eq('id', editingId);
+
+      if (updateError) {
+        setFormError('상품 수정에 실패했어요: ' + updateError.message);
+        setSubmitting(false);
+        return;
+      }
     } else {
-      resetForm();
-      setShowForm(false);
-      fetchProducts();
+      // 신규 등록 모드: insert
+      const { error: insertError } = await supabase.from('products').insert({
+        ...payload,
+        created_by: profile?.id,
+      });
+
+      if (insertError) {
+        setFormError('상품 등록에 실패했어요: ' + insertError.message);
+        setSubmitting(false);
+        return;
+      }
     }
 
+    resetForm();
+    setShowForm(false);
+    fetchProducts();
     setSubmitting(false);
   };
 
@@ -183,7 +225,15 @@ export const AdminPage: React.FC = () => {
             </div>
           </div>
           <button
-            onClick={() => { setShowForm(!showForm); if (showForm) resetForm(); }}
+            onClick={() => {
+              if (showForm) {
+                resetForm();
+                setShowForm(false);
+              } else {
+                resetForm();
+                setShowForm(true);
+              }
+            }}
             className="flex items-center space-x-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
           >
             {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -194,10 +244,12 @@ export const AdminPage: React.FC = () => {
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4">
-        {/* Registration Form */}
+        {/* Registration / Edit Form */}
         {showForm && (
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 mb-6">
-            <h2 className="text-sm font-bold text-neutral-900 mb-4">새 상품 등록</h2>
+            <h2 className="text-sm font-bold text-neutral-900 mb-4">
+              {editingId ? '상품 수정' : '새 상품 등록'}
+            </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
@@ -312,14 +364,28 @@ export const AdminPage: React.FC = () => {
               <p className="text-red-500 text-xs font-medium mb-3">{formError}</p>
             )}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-neutral-900 hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
-            >
-              {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-              <span>{submitting ? '등록 중...' : '상품 등록하기'}</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex items-center space-x-2 px-5 py-2.5 bg-neutral-900 hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
+              >
+                {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                <span>
+                  {submitting ? (editingId ? '수정 중...' : '등록 중...') : (editingId ? '수정 완료하기' : '상품 등록하기')}
+                </span>
+              </button>
+
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={() => { resetForm(); setShowForm(false); }}
+                  className="px-5 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                >
+                  수정 취소
+                </button>
+              )}
+            </div>
           </form>
         )}
 
@@ -354,6 +420,13 @@ export const AdminPage: React.FC = () => {
                     <div className="text-sm font-bold text-neutral-900 truncate">{p.name}</div>
                     <div className="text-xs text-neutral-500">₩{p.price.toLocaleString()}</div>
                   </div>
+                  <button
+                    onClick={() => handleEditClick(p)}
+                    className="p-2 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                    title="수정"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
                   <button
                     onClick={() => handleDelete(p.id)}
                     className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
