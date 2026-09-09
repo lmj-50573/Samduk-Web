@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavSection, BrandId } from '../../types';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -25,6 +25,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
   onSelectBrandFilter,
 }) => {
   const [activeSlide, setActiveSlide] = useState(0);
+  // 바로 이전 슬라이드 번호를 기억해둠 (처음↔끝으로 자연스럽게 넘어가기 위해 필요)
+  const prevSlideRef = useRef(0);
+  useEffect(() => {
+    prevSlideRef.current = activeSlide;
+  }, [activeSlide]);
 
   const slides: HeroSlide[] = [
     {
@@ -112,19 +117,32 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
-        {slides.map((s, i) => (
-          <img
-            key={s.id}
-            src={s.image}
-            alt={`${s.titleEnMain} ${s.titleEnSub}`}
-            referrerPolicy="no-referrer"
-            className={`absolute inset-0 w-full h-full object-cover object-center scale-105 brightness-60 transition-opacity duration-[1600ms] ease-in-out ${
-              i === activeSlide ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/90 via-neutral-950/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent opacity-90" />
+        {slides.map((s, i) => {
+          // 현재 활성 슬라이드 기준 왼쪽/오른쪽 거리 계산
+          let offset = i - activeSlide;
+          // 처음↔끝을 자연스럽게 한 방향으로 잇기 위해, 더 짧은 방향으로 우회
+          if (offset > slides.length / 2) offset -= slides.length;
+          else if (offset < -slides.length / 2) offset += slides.length;
+
+          // 지금 들어오거나 나가는 슬라이드만 애니메이션, 나머지는 화면 밖에서 순간 이동(깜빡임 방지)
+          const isAnimating = i === activeSlide || i === prevSlideRef.current;
+
+          return (
+            <img
+              key={s.id}
+              src={s.image}
+              alt={`${s.titleEnMain} ${s.titleEnSub}`}
+              referrerPolicy="no-referrer"
+              className="absolute inset-0 w-full h-full object-cover object-center brightness-60"
+              style={{
+                transform: `translateX(${offset * 100}%)`,
+                transition: isAnimating ? 'transform 900ms ease-in-out' : 'none',
+              }}
+            />
+          );
+        })}
+        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/65 via-neutral-950/35 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/70 via-transparent to-transparent" />
       </div>
 
       {/* Hero content area */}

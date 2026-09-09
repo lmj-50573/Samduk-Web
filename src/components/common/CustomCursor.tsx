@@ -94,6 +94,14 @@ export const CustomCursor: React.FC = () => {
         body.custom-cursor-active * {
           cursor: none !important;
         }
+        /* 특정 영역(예: Spline 3D 히어로)에 마우스가 있을 때는 신발 커서를 숨기고 기본 커서로 되돌림 */
+        body.hide-shoe-cursor .wantu-shoe-cursor {
+          opacity: 0 !important;
+        }
+        body.hide-shoe-cursor,
+        body.hide-shoe-cursor * {
+          cursor: auto !important;
+        }
         @keyframes clickRipple {
           from {
             transform: scale(0);
@@ -158,7 +166,7 @@ export const CustomCursor: React.FC = () => {
       {/* 고스트(회색) 신발: 살짝 늦게 부드럽게 따라오는 트레일 */}
       <div
         ref={ghostRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9998] select-none transition-[font-size] duration-200 ease-out"
+        className="fixed top-0 left-0 pointer-events-none z-[9998] select-none transition-[font-size,opacity] duration-200 ease-out wantu-shoe-cursor"
         style={{
           fontSize: `${shoeSize}px`,
           filter: 'grayscale(1) brightness(0) opacity(0.28)',
@@ -170,7 +178,7 @@ export const CustomCursor: React.FC = () => {
       {/* 컬러 신발: 실제 마우스 위치(메인 커서) */}
       <div
         ref={colorRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9999] select-none transition-[font-size] duration-200 ease-out"
+        className="fixed top-0 left-0 pointer-events-none z-[9999] select-none transition-[font-size,opacity] duration-200 ease-out wantu-shoe-cursor"
         style={{
           fontSize: `${shoeSize}px`,
           filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.35))',

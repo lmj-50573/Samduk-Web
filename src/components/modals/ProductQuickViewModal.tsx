@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ShoeProduct } from '../../types';
-import { X, Heart, ExternalLink, ShieldCheck, CheckCircle2, Ruler, Sparkles } from 'lucide-react';
+import { X, Heart, ExternalLink, ShieldCheck, CheckCircle2, Ruler, Sparkles, Droplet, Feather, Settings2, ChevronDown, Pencil } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { ProductQuickEditModal } from '../common/ProductQuickEditModal';
 
 interface ProductQuickViewModalProps {
   product: ShoeProduct | null;
@@ -8,6 +10,8 @@ interface ProductQuickViewModalProps {
   wishlist: string[];
   onToggleWishlist: (productId: string) => void;
   onOpenBrandStore: (url: string, brandName: string) => void;
+  onProductUpdated?: (updated: ShoeProduct) => void;
+  onProductDeleted?: (id: string) => void;
 }
 
 export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
@@ -16,17 +20,55 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
   wishlist,
   onToggleWishlist,
   onOpenBrandStore,
+  onProductUpdated,
+  onProductDeleted,
 }) => {
+  const { isAdmin } = useAuth();
   if (!product) return null;
 
   const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [selectedSize, setSelectedSize] = useState<number>(product.sizes[2] || 260);
   const [selectedColor, setSelectedColor] = useState<string>(product.colors[0]);
+  const [showDetailSpecs, setShowDetailSpecs] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const isSaved = wishlist.includes(product.id);
   const discountPercent = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+
+  // 어려운 전문 스펙 대신, 사용자가 바로 이해할 수 있는 쉬운 핵심 포인트로 정리
+  const weightValue = product.specs.weight?.split(/[(,]/)[0]?.trim() || product.specs.weight;
+  const isBoaClosure = /boa/i.test(product.specs.closureSystem || '');
+
+  const highlights: { icon: React.ReactNode; label: string; value: string }[] = [];
+
+  if (weightValue) {
+    highlights.push({
+      icon: <Feather className="w-4 h-4" />,
+      label: '무게',
+      value: `${weightValue} 초경량`,
+    });
+  }
+  if (product.specs.waterproof) {
+    highlights.push({
+      icon: <Droplet className="w-4 h-4" />,
+      label: '방수',
+      value: '완벽 방수 설계',
+    });
+  }
+  highlights.push({
+    icon: <Settings2 className="w-4 h-4" />,
+    label: '조임 방식',
+    value: isBoaClosure ? 'BOA 다이얼로 간편하게' : '편안한 착화감',
+  });
+  if (product.specs.safetyStandard) {
+    highlights.push({
+      icon: <ShieldCheck className="w-4 h-4" />,
+      label: '안전',
+      value: '국가 안전 인증 획득',
+    });
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/80 backdrop-blur-sm animate-fadeIn">
@@ -71,26 +113,6 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
               )}
             </div>
           </div>
-                  {/* Color Swatch */}
-                  {product.colorVariants && product.colorVariants.length > 0 && (
-                      <div className="flex items-center gap-2 mt-2">
-                          {product.colorVariants.map((variant, i) => (
-                              <button
-                                  key={variant.name}
-                                  onClick={() => {
-                                      setSelectedColor(variant.name);
-                                      setSelectedImageIdx(0);
-                                  }}
-                                  className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold uppercase transition-all cursor-pointer ${selectedColor === variant.name
-                                          ? 'border-blue-600 bg-blue-50 text-blue-600'
-                                          : 'border-neutral-200 text-neutral-600 hover:border-neutral-400'
-                                      }`}
-                              >
-                                  {variant.name}
-                              </button>
-                          ))}
-                      </div>
-                  )}
           {/* Thumbnail strip */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 mt-2">
                       {(product.colorVariants?.find(v => v.name === selectedColor)?.gallery || product.gallery).map((imgUrl, i) => (
@@ -107,7 +129,7 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
 
           {/* Quality badge bottom */}
                   <div className="mt-auto pt-3 border-t border-neutral-200/80 flex items-center justify-between text-[11px] font-mono text-neutral-500">
-            <span>SAMDUK</span>
+            <span>WANTU</span>
             <span className="text-blue-600 font-bold">GORE-TEX</span>
           </div>
         </div>
@@ -146,6 +168,17 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
                 </span>
               )}
             </div>
+
+            {/* 관리자 전용: 이 상품 바로 수정 (가격 바로 아래, 눈에 덜 띄게) */}
+            {isAdmin && (
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+              >
+                <Pencil className="w-3 h-3" />
+                <span>이 상품 수정하기 (관리자)</span>
+              </button>
+            )}
 
             <p className="text-xs text-neutral-600 leading-relaxed font-light">
               {product.shortDescription}
@@ -194,23 +227,52 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
               </div>
             </div>
 
-            {/* Detailed Specs list */}
-                      <div className="p-4 bg-neutral-50 rounded-2xl border border-neutral-200/80 space-y-1.5 text-xs font-mono text-neutral-700 whitespace-pre-line">
-              <div>
-                <span className="text-neutral-400">UPPER:</span> {product.specs.upper}
-              </div>
-              <div>
-                <span className="text-neutral-400">SOLE:</span> {product.specs.sole}
-              </div>
-              <div>
-                <span className="text-neutral-400">CLOSURE:</span> {product.specs.closureSystem}
-              </div>
-              <div>
-                <span className="text-neutral-400">WEIGHT:</span> {product.specs.weight}
-              </div>
-              {product.specs.safetyStandard && (
-                <div className="text-blue-700 font-bold">
-                  <span className="text-neutral-400">CERT:</span> {product.specs.safetyStandard}
+            {/* 쉬운 핵심 포인트 카드 (전문 스펙 대신 누구나 이해할 수 있는 요약) */}
+            <div className="grid grid-cols-2 gap-2">
+              {highlights.map((h, i) => (
+                <div
+                  key={i}
+                  className="p-3 bg-neutral-50 rounded-xl border border-neutral-200/80 flex items-start gap-2"
+                >
+                  <span className="text-blue-600 shrink-0 mt-0.5">{h.icon}</span>
+                  <div>
+                    <div className="text-[10px] font-mono font-bold text-neutral-400 uppercase">{h.label}</div>
+                    <div className="text-xs font-bold text-neutral-800">{h.value}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* 전문가용 상세 스펙: 기본은 접혀있고, 원하는 사람만 펼쳐서 볼 수 있음 */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowDetailSpecs((v) => !v)}
+                className="flex items-center gap-1 text-[11px] font-mono font-bold text-neutral-400 hover:text-neutral-700 cursor-pointer"
+              >
+                <span>전문가용 상세 스펙 {showDetailSpecs ? '접기' : '보기'}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${showDetailSpecs ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showDetailSpecs && (
+                <div className="mt-2 p-4 bg-neutral-50 rounded-2xl border border-neutral-200/80 space-y-1.5 text-xs font-mono text-neutral-700 whitespace-pre-line">
+                  <div>
+                    <span className="text-neutral-400">UPPER:</span> {product.specs.upper}
+                  </div>
+                  <div>
+                    <span className="text-neutral-400">SOLE:</span> {product.specs.sole}
+                  </div>
+                  <div>
+                    <span className="text-neutral-400">CLOSURE:</span> {product.specs.closureSystem}
+                  </div>
+                  <div>
+                    <span className="text-neutral-400">WEIGHT:</span> {product.specs.weight}
+                  </div>
+                  {product.specs.safetyStandard && (
+                    <div className="text-blue-700 font-bold">
+                      <span className="text-neutral-400">CERT:</span> {product.specs.safetyStandard}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -243,6 +305,24 @@ export const ProductQuickViewModal: React.FC<ProductQuickViewModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* 관리자 전용: 바로 수정 팝업 */}
+      {showEditModal && (
+        <ProductQuickEditModal
+          product={product}
+          onClose={() => setShowEditModal(false)}
+          onSaved={(updated) => {
+            onProductUpdated?.(updated);
+            setShowEditModal(false);
+            onClose();
+          }}
+          onDeleted={(id) => {
+            onProductDeleted?.(id);
+            setShowEditModal(false);
+            onClose();
+          }}
+        />
+      )}
     </div>
   );
 };

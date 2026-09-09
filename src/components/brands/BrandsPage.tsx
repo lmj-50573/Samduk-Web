@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrandId, ShoeProduct, NavSection } from '../../types';
 import { BRANDS_DATA, PRODUCTS_DATA } from '../../data/samdukData';
 import { 
@@ -35,56 +35,231 @@ const [activeBrandId, setActiveBrandId] = useState<BrandId | 'DISCOVERY'>(initia
   const brandProducts = PRODUCTS_DATA.filter((p) => p.brand === activeBrandId);
   const secondaryImage = brandProducts[0]?.image || brand.heroImage;
 
-  const getBrandIcon = (id: BrandId, className = "w-5 h-5") => {
-    switch (id) {
-      case 'K2_SAFETY': return <ShieldCheck className={className} />;
-      case 'EIDER': return <Compass className={className} />;
-      case 'BLACK_YAK': return <Flame className={className} />;
-      default: return <ShieldCheck className={className} />;
-    }
-  };
+  // 다음 브랜드 섹션이 덮어올 때, 이전 섹션이 살짝 작아지고 어두워지는 입체 효과
+  // (스크롤할 때만 계산하도록 최적화해서 불필요한 부하를 줄임)
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    let rafId: number | null = null;
+
+    const update = () => {
+      const viewportH = window.innerHeight;
+      const navH = 80;
+
+      sectionRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const nextEl = sectionRefs.current[i + 1];
+
+        let progress = 0;
+        if (nextEl) {
+          const nextRect = nextEl.getBoundingClientRect();
+          progress = (viewportH - nextRect.top) / (viewportH - navH);
+          progress = Math.max(0, Math.min(1, progress));
+        }
+
+        el.style.transform = `scale(${1 - progress * 0.06})`;
+        el.style.filter = `brightness(${1 - progress * 0.35})`;
+      });
+
+      rafId = null;
+    };
+
+    const onScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(update);
+      }
+    };
+
+    update(); // 초기 상태 한 번 계산
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white pb-24">
-      {/* Brand Navigation Tabs */}
-      <div className="sticky top-20 z-40 bg-neutral-900/95 backdrop-blur-md border-b border-neutral-800 py-3 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto scrollbar-none gap-3">
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-mono uppercase text-neutral-400 mr-2 font-bold hidden sm:inline">
-              SELECT BRAND:
-            </span>
-            {BRANDS_DATA.map((b) => {
-              const isActive = b.id === activeBrandId;
-              return (
-                <button
-                  key={b.id}
-                  onClick={() => setActiveBrandId(b.id)}
-                  className={`px-5 py-2.5 rounded-full text-xs font-bold font-mono tracking-wider transition-all cursor-pointer flex items-center space-x-2 shrink-0 ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                      : 'bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700'
-                  }`}
-                >
-                  {getBrandIcon(b.id, "w-4 h-4")}
-                  <span>{b.name}</span>
-                  <span className="text-[10px] opacity-75 hidden md:inline">({b.nameKo})</span>
-                </button>
-              );
-            })}
-          </div>
+      {/* Intro Hero: Spline 3D 장면을 전체 배경으로 깔고, 그 위에 텍스트를 얹음 */}
+      <div
+        className="min-h-screen relative flex items-center px-4 sm:px-6 lg:px-8 border-b border-neutral-800 overflow-hidden"
+      >
+        {/* 고급스러운 오로라 그라데이션 + 은은한 그레인 텍스처.
+            부드럽게 번지는 브랜드 컬러 오로라 위에, 미세한 입자 질감을 겹쳐서
+            밋밋하지 않고 고급스러운 느낌을 냄. WebGL 없이 순수 CSS/SVG라 가벼움 */}
+        <div className="absolute inset-0 z-0 overflow-hidden bg-neutral-950">
+          <style>{`
+            @keyframes auroraDriftA {
+              0%   { transform: translate(-8%, -6%) scale(1) rotate(0deg); }
+              50%  { transform: translate(10%, 8%) scale(1.15) rotate(8deg); }
+              100% { transform: translate(-8%, -6%) scale(1) rotate(0deg); }
+            }
+            @keyframes auroraDriftB {
+              0%   { transform: translate(6%, 10%) scale(1.1) rotate(0deg); }
+              50%  { transform: translate(-10%, -8%) scale(0.95) rotate(-10deg); }
+              100% { transform: translate(6%, 10%) scale(1.1) rotate(0deg); }
+            }
+            @keyframes auroraDriftC {
+              0%   { transform: translate(0%, 4%) scale(1) rotate(0deg); }
+              50%  { transform: translate(-6%, -10%) scale(1.2) rotate(6deg); }
+              100% { transform: translate(0%, 4%) scale(1) rotate(0deg); }
+            }
+            .aurora-blob {
+              position: absolute;
+              border-radius: 9999px;
+              filter: blur(90px);
+              will-change: transform;
+            }
+          `}</style>
 
-          <button
-            onClick={() => onOpenBrandStore(brand.officialStoreUrl, brand.name)}
-            className="px-5 py-2 bg-white text-neutral-900 hover:bg-blue-500 hover:text-white rounded-full text-xs font-bold uppercase tracking-wider transition-colors shrink-0 inline-flex items-center space-x-1.5 cursor-pointer"
-          >
-            <span>OFFICIAL MALL</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </button>
+          <div
+            className="aurora-blob"
+            style={{
+              width: '560px',
+              height: '560px',
+              top: '-10%',
+              left: '5%',
+              background: 'radial-gradient(circle, rgba(217,119,6,0.55) 0%, rgba(217,119,6,0) 70%)',
+              animation: 'auroraDriftA 22s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="aurora-blob"
+            style={{
+              width: '620px',
+              height: '620px',
+              top: '15%',
+              left: '50%',
+              background: 'radial-gradient(circle, rgba(37,99,235,0.5) 0%, rgba(37,99,235,0) 70%)',
+              animation: 'auroraDriftB 26s ease-in-out infinite',
+            }}
+          />
+          <div
+            className="aurora-blob"
+            style={{
+              width: '480px',
+              height: '480px',
+              bottom: '-5%',
+              left: '20%',
+              background: 'radial-gradient(circle, rgba(226,232,240,0.28) 0%, rgba(226,232,240,0) 70%)',
+              animation: 'auroraDriftC 20s ease-in-out infinite',
+            }}
+          />
+
+          {/* 은은한 그레인(입자) 텍스처 오버레이 */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+              opacity: 0.06,
+              mixBlendMode: 'overlay',
+            }}
+          />
+        </div>
+
+        {/* 텍스트 오버레이 */}
+        <div className="max-w-7xl mx-auto relative z-10">
+          <span className="text-xs font-mono font-bold tracking-widest text-blue-500 uppercase block mb-3">
+            WANTU · 3 PARTNER BRANDS
+          </span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter uppercase leading-[0.95] mb-6">
+            OUR<br />BRANDS
+          </h1>
+          <p className="text-neutral-300 text-sm sm:text-base max-w-xl leading-relaxed">
+            안전화의 K2 SAFETY, 아웃도어의 EIDER, 알파인의 BLACK YAK.
+            <br />
+            아래로 스크롤하며 각 브랜드를 만나보세요.
+          </p>
         </div>
       </div>
 
+      {/* Brand Folder Stack: 스크롤하면 브랜드별 색깔 탭이 차례로 겹쳐 쌓임 */}
+      <div className="relative">
+        {BRANDS_DATA.map((b, i) => {
+          const isDark = b.id !== 'K2_SAFETY'; // K2는 밝은 앰버라 어두운 글씨, 나머지는 흰 글씨
+          const bProducts = PRODUCTS_DATA.filter((p) => p.brand === b.id).slice(0, 4);
+          return (
+            <section
+              key={b.id}
+              id={`brand-tab-${b.id}`}
+              ref={(el) => { sectionRefs.current[i] = el; }}
+              className="sticky flex flex-col overflow-hidden rounded-t-3xl"
+              style={{
+                top: '80px',
+                height: 'calc(100vh - 80px)',
+                zIndex: 10 + i,
+                backgroundColor: b.accentColor,
+              }}
+            >
+              {/* 왼쪽엔 원본 비율 그대로(찌그러지지 않게) 고정 너비로 곡선 탭을 그리고,
+                  오른쪽은 같은 색 평평한 배경으로 자연스럽게 이어붙임 */}
+              <div className="flex items-end shrink-0">
+                <svg
+                  className="shrink-0"
+                  style={{ width: '260px', height: 'auto', color: b.accentColor }}
+                  viewBox="0 0 326.58 47.25"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="m296.32 32.41-16.07-18.58c-7.6-8.78-18.64-13.83-30.25-13.83h-210c-22.09 0-40 17.91-40 40v7.25h326.58v-1c-11.61 0-22.66-5.05-30.25-13.83z"
+                    fill="currentColor"
+                  />
+                </svg>
+                <div className="flex-1 h-[37px]" style={{ backgroundColor: b.accentColor }} />
+              </div>
+
+              <div
+                className="pt-2 pb-6 px-4 sm:px-6 lg:px-8 flex-1 flex flex-col"
+                style={{ color: isDark ? '#ffffff' : '#1a1206' }}
+              >
+                <div className="max-w-7xl mx-auto w-full flex flex-col flex-1">
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                    <div>
+                      <div className="text-[10px] font-mono font-bold tracking-widest opacity-70 mb-1">
+                        EST. {b.foundedYear} · {b.categoryFocus}
+                      </div>
+                      <div className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
+                        {b.name}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setActiveBrandId(b.id);
+                        document.getElementById('brand-detail')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="text-xs font-bold uppercase tracking-wider whitespace-nowrap cursor-pointer inline-flex items-center gap-1 shrink-0"
+                    >
+                      <span>자세히 보기</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* 상품 이미지 스트립: 섹션에 충분한 높이를 줘서 스택 효과가 스크롤 중 보이도록 함 */}
+                  <div className="flex gap-4 overflow-x-auto scrollbar-none flex-1">
+                    {bProducts.map((p) => (
+                      <div
+                        key={p.id}
+                        className="relative shrink-0 w-52 sm:w-64 rounded-2xl overflow-hidden bg-black/10"
+                      >
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
+        })}
+      </div>
+
       {/* Editorial Block 1: Intro — image left, copy right */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+      <div id="brand-detail" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <div className="lg:col-span-6 relative aspect-4/5 sm:aspect-3/4 rounded-3xl overflow-hidden bg-neutral-900">
             <img

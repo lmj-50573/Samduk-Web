@@ -1,7 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ShoeProduct, ShoeCategory, BrandId } from '../../types';
 import { PRODUCTS_DATA, BRANDS_DATA } from '../../data/samdukData';
 import { Eye, Heart, Filter, Search, X, SlidersHorizontal, ShieldCheck, Camera, Sparkles } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+
+interface TaxonomyRow {
+  id: string;
+  value: string;
+  label: string;
+  sort_order: number;
+}
 
 interface ShopPageProps {
   initialBrandFilter?: BrandId | 'ALL';
@@ -29,13 +37,25 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   const [techFilter, setTechFilter] = useState<string | 'ALL'>('ALL');
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
+  // 카테고리 & 브랜드 목록을 DB에서 불러옴 (관리자 페이지에서 추가/삭제한 게 여기 자동 반영됨)
+  const [dbCategories, setDbCategories] = useState<TaxonomyRow[]>([]);
+  const [dbBrands, setDbBrands] = useState<TaxonomyRow[]>([]);
+
+  useEffect(() => {
+    const fetchTaxonomy = async () => {
+      const [catRes, brandRes] = await Promise.all([
+        supabase.from('categories').select('*').order('sort_order', { ascending: true }),
+        supabase.from('brands').select('*').order('sort_order', { ascending: true }),
+      ]);
+      if (catRes.data) setDbCategories(catRes.data as TaxonomyRow[]);
+      if (brandRes.data) setDbBrands(brandRes.data as TaxonomyRow[]);
+    };
+    fetchTaxonomy();
+  }, []);
+
   const categories: { label: string; value: ShoeCategory }[] = [
     { label: '전체 (ALL)', value: 'ALL' },
-    { label: '안전화 (SAFETY)', value: 'Safety' },
-    { label: '등산·아웃도어 (OUTDOOR)', value: 'Outdoor' },
-    { label: '러닝·레이싱 (RUNNING)', value: 'Running' },
-    { label: '컴포트·어반 (LIFESTYLE)', value: 'Lifestyle' },
-    { label: '작업화·ESD (WORK)', value: 'Work' },
+    ...dbCategories.map((c) => ({ label: c.label, value: c.value as ShoeCategory })),
   ];
 
   const technologies = ['ALL', 'GORE-TEX', 'BOA', 'VIBRAM', 'K-SAFETY', 'ORTHOLITE', 'CARBON-PLATE'];
@@ -117,17 +137,17 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         >
           전체 브랜드
         </button>
-        {BRANDS_DATA.map((brand) => (
+        {dbBrands.map((brand) => (
           <button
             key={brand.id}
-            onClick={() => setSelectedBrand(brand.id)}
+            onClick={() => setSelectedBrand(brand.value as BrandId)}
             className={`pb-3 text-sm font-extrabold whitespace-nowrap shrink-0 border-b-2 -mb-0.5 transition-colors cursor-pointer ${
-              selectedBrand === brand.id
+              selectedBrand === brand.value
                 ? 'text-neutral-900 border-neutral-900'
                 : 'text-neutral-400 border-transparent hover:text-neutral-600'
             }`}
           >
-            {brand.name}
+            {brand.label}
           </button>
         ))}
       </div>
@@ -452,6 +472,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({
           </div>
         )}
       </div>
+
+
     </div>
   );
 };
