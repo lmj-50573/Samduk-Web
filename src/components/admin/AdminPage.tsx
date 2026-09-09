@@ -24,6 +24,8 @@ interface Product {
     safetyStandard?: string;
     waterproof?: boolean;
   } | null;
+  sizes: number[] | null;
+  gallery: string[] | null;
 }
 
 interface TaxonomyRow {
@@ -32,6 +34,7 @@ interface TaxonomyRow {
   label: string;
   sort_order: number;
 }
+
 
 
 export const AdminPage: React.FC = () => {
@@ -68,8 +71,7 @@ export const AdminPage: React.FC = () => {
   const [price, setPrice] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageSlots, setImageSlots] = useState<{ id: string; url: string; file?: File }[]>([]);
   const [isNew, setIsNew] = useState(false);
   const [isBest, setIsBest] = useState(false);
 
@@ -81,6 +83,9 @@ export const AdminPage: React.FC = () => {
   const [specClosure, setSpecClosure] = useState('');
   const [specSafety, setSpecSafety] = useState('');
   const [specWaterproof, setSpecWaterproof] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState<number[]>([]);
+  const [sizeFrom, setSizeFrom] = useState('230');
+  const [sizeTo, setSizeTo] = useState('280');
 
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
@@ -182,8 +187,7 @@ export const AdminPage: React.FC = () => {
     setPrice('');
     setOriginalPrice('');
     setDescription('');
-    setImageFile(null);
-    setImagePreview(null);
+    setImageSlots([]);
     setIsNew(false);
     setIsBest(false);
     setFormError('');
@@ -194,6 +198,7 @@ export const AdminPage: React.FC = () => {
     setSpecClosure('');
     setSpecSafety('');
     setSpecWaterproof(false);
+    setSelectedSizes([]);
     setShowDetailFields(false);
   };
 
@@ -207,8 +212,10 @@ export const AdminPage: React.FC = () => {
     setPrice(String(p.price));
     setOriginalPrice(p.original_price ? String(p.original_price) : '');
     setDescription(p.short_description || '');
-    setImageFile(null);
-    setImagePreview(p.image);
+    {
+      const urls = p.gallery && p.gallery.length > 0 ? p.gallery : (p.image ? [p.image] : []);
+      setImageSlots(urls.map((u, i) => ({ id: `existing-${i}`, url: u })));
+    }
     setIsNew(p.is_new);
     setIsBest(p.is_best);
     setSpecUpper(p.specs?.upper || '');
@@ -217,18 +224,26 @@ export const AdminPage: React.FC = () => {
     setSpecClosure(p.specs?.closureSystem || '');
     setSpecSafety(p.specs?.safetyStandard || '');
     setSpecWaterproof(p.specs?.waterproof || false);
+    setSelectedSizes(p.sizes && p.sizes.length > 0 ? p.sizes : []);
     setFormError('');
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
+  const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const newSlots = files.map((file) => ({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      url: URL.createObjectURL(file),
+      file,
+    }));
+    setImageSlots((prev) => [...prev, ...newSlots]);
+    e.target.value = '';
+  };
+
+  const handleRemoveImage = (id: string) => {
+    setImageSlots((prev) => prev.filter((slot) => slot.id !== id));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -242,29 +257,34 @@ export const AdminPage: React.FC = () => {
 
     setSubmitting(true);
 
-    // 새로 고른 이미지가 있으면 업로드하고, 없으면 기존 이미지 URL을 그대로 씀 (수정 모드일 때)
-    let imageUrl: string | null = editingId ? imagePreview : null;
+    // 순서대로 이미지 업로드: 이미 URL인 건 그대로, 새로 고른 파일만 업로드해서 URL로 바꿈
+    const finalUrls: string[] = [];
+    for (const slot of imageSlots) {
+      if (slot.file) {
+        const fileExt = slot.file.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
 
-    if (imageFile) {
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(fileName, slot.file);
 
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(fileName, imageFile);
+        if (uploadError) {
+          setFormError('이미지 업로드에 실패했어요: ' + uploadError.message);
+          setSubmitting(false);
+          return;
+        }
 
-      if (uploadError) {
-        setFormError('이미지 업로드에 실패했어요: ' + uploadError.message);
-        setSubmitting(false);
-        return;
+        const { data: publicUrlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(fileName);
+
+        finalUrls.push(publicUrlData.publicUrl);
+      } else {
+        finalUrls.push(slot.url);
       }
-
-      const { data: publicUrlData } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(fileName);
-
-      imageUrl = publicUrlData.publicUrl;
     }
+
+    const imageUrl: string | null = finalUrls[0] || null;
 
     const payload = {
       name,
@@ -274,6 +294,7 @@ export const AdminPage: React.FC = () => {
       price: parseInt(price, 10),
       original_price: originalPrice ? parseInt(originalPrice, 10) : null,
       image: imageUrl,
+      gallery: finalUrls.length > 0 ? finalUrls : null,
       short_description: description || null,
       is_new: isNew,
       is_best: isBest,
@@ -285,6 +306,7 @@ export const AdminPage: React.FC = () => {
         safetyStandard: specSafety || undefined,
         waterproof: specWaterproof,
       },
+      sizes: selectedSizes.length > 0 ? selectedSizes : null,
     };
 
     if (editingId) {
@@ -562,25 +584,32 @@ export const AdminPage: React.FC = () => {
             </div>
 
             <div className="mb-4">
-              <label className="text-xs font-bold text-neutral-500 block mb-1.5">상품 이미지</label>
-              {imagePreview ? (
-                <div className="relative w-32 h-32">
-                  <img src={imagePreview} alt="preview" className="w-32 h-32 object-cover rounded-xl border border-neutral-200" />
-                  <button
-                    type="button"
-                    onClick={() => { setImageFile(null); setImagePreview(null); }}
-                    className="absolute -top-2 -right-2 w-6 h-6 bg-neutral-900 text-white rounded-full flex items-center justify-center cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ) : (
-                <label className="w-32 h-32 border-2 border-dashed border-neutral-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors text-neutral-400">
+              <label className="text-xs font-bold text-neutral-500 block mb-1.5">상품 이미지 (첫 번째가 대표 사진, 여러 장 선택 가능)</label>
+              <div className="flex flex-wrap gap-3">
+                {imageSlots.map((slot, i) => (
+                  <div key={slot.id} className="relative w-24 h-24">
+                    <img src={slot.url} alt="preview" className="w-24 h-24 object-cover rounded-xl border border-neutral-200" />
+                    {i === 0 && (
+                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-blue-600 text-white text-[9px] font-bold rounded">
+                        대표
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(slot.id)}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-neutral-900 text-white rounded-full flex items-center justify-center cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+                <label className="w-24 h-24 border-2 border-dashed border-neutral-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition-colors text-neutral-400 shrink-0">
                   <Upload className="w-5 h-5 mb-1" />
-                  <span className="text-[10px] font-bold">이미지 선택</span>
-                  <input type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
+                  <span className="text-[10px] font-bold">추가</span>
+                  <input type="file" accept="image/*" multiple onChange={handleAddImages} className="hidden" />
                 </label>
-              )}
+              </div>
+
             </div>
 
             <div className="flex items-center space-x-4 mb-4">
@@ -658,6 +687,59 @@ export const AdminPage: React.FC = () => {
                       placeholder="예: KCS 국가안전인증 1급"
                       className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600"
                     />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-neutral-500 block mb-1.5">사이즈 (mm) — 시작~끝 입력 후 채우기</label>
+                    <div className="flex items-center gap-2 mb-2">
+                      <input
+                        type="number"
+                        value={sizeFrom}
+                        onChange={(e) => setSizeFrom(e.target.value)}
+                        placeholder="시작 (예: 180)"
+                        className="w-24 bg-neutral-50 border border-neutral-200 rounded-lg px-2.5 py-2 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600"
+                      />
+                      <span className="text-xs text-neutral-400">~</span>
+                      <input
+                        type="number"
+                        value={sizeTo}
+                        onChange={(e) => setSizeTo(e.target.value)}
+                        placeholder="끝 (예: 220)"
+                        className="w-24 bg-neutral-50 border border-neutral-200 rounded-lg px-2.5 py-2 text-xs text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const from = parseInt(sizeFrom, 10);
+                          const to = parseInt(sizeTo, 10);
+                          if (isNaN(from) || isNaN(to) || from > to) return;
+                          const range: number[] = [];
+                          for (let s = from; s <= to; s += 5) range.push(s);
+                          setSelectedSizes(range);
+                        }}
+                        className="px-3 py-2 bg-neutral-900 hover:bg-blue-600 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                      >
+                        채우기
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-neutral-400 mb-2">5mm 간격으로 자동 채워져요 (주니어 신발이면 180~220처럼 작게 넣으면 돼요)</p>
+
+                    {selectedSizes.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {selectedSizes.map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => setSelectedSizes((prev) => prev.filter((x) => x !== s))}
+                            className="px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold bg-blue-600 text-white cursor-pointer hover:bg-red-500 transition-colors"
+                            title="눌러서 제거"
+                          >
+                            {s} ×
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-[10px] text-neutral-400 mt-1.5">아무것도 안 고르면 기본 사이즈(250~280)로 표시돼요</p>
                   </div>
 
                   <label className="flex items-center space-x-1.5 cursor-pointer">
