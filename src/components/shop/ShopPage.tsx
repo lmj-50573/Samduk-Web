@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ShoeProduct, ShoeCategory, BrandId } from '../../types';
+import { ShoeProduct, BrandId } from '../../types';
 import { PRODUCTS_DATA, BRANDS_DATA } from '../../data/samdukData';
 import { Eye, Heart, Filter, Search, X, SlidersHorizontal, ShieldCheck, Camera, Sparkles } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -13,7 +13,7 @@ interface TaxonomyRow {
 
 interface ShopPageProps {
   initialBrandFilter?: BrandId | 'ALL';
-  initialCategoryFilter?: ShoeCategory;
+  initialCategoryFilter?: string;
   products?: ShoeProduct[];
   onOpenQuickView: (product: ShoeProduct) => void;
   wishlist: string[];
@@ -31,7 +31,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   onOpenBrandStore,
 }) => {
   const [selectedBrand, setSelectedBrand] = useState<BrandId | 'ALL'>(initialBrandFilter);
-  const [selectedCategory, setSelectedCategory] = useState<ShoeCategory>(initialCategoryFilter);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategoryFilter);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'FEATURED' | 'NEW' | 'PRICE_ASC' | 'PRICE_DESC' | 'RATING'>('FEATURED');
   const [techFilter, setTechFilter] = useState<string | 'ALL'>('ALL');
@@ -53,9 +53,9 @@ export const ShopPage: React.FC<ShopPageProps> = ({
     fetchTaxonomy();
   }, []);
 
-  const categories: { label: string; value: ShoeCategory }[] = [
+  const categories: { label: string; value: string }[] = [
     { label: '전체 (ALL)', value: 'ALL' },
-    ...dbCategories.map((c) => ({ label: c.label, value: c.value as ShoeCategory })),
+    ...dbCategories.map((c) => ({ label: c.label, value: c.value })),
   ];
 
   const technologies = ['ALL', 'GORE-TEX', 'BOA', 'VIBRAM', 'K-SAFETY', 'ORTHOLITE', 'CARBON-PLATE'];

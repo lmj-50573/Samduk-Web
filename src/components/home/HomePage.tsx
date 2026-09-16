@@ -50,8 +50,9 @@ export const HomePage: React.FC<HomePageProps> = ({
       <NewArrivals
         onOpenQuickView={onOpenQuickView}
         onNavigate={onNavigate}
-        wishlist={[]}
-        onToggleWishlist={() => {}}
+        wishlist={wishlist}
+        onToggleWishlist={onToggleWishlist}
+        products={products}
       />
 
       {/* Duotone scrolling marquee straddling the white->black section boundary.

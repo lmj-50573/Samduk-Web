@@ -47,6 +47,7 @@ export const ProductQuickEditModal: React.FC<ProductQuickEditModalProps> = ({
   const [price, setPrice] = useState(String(product.price));
   const [originalPrice, setOriginalPrice] = useState(product.originalPrice ? String(product.originalPrice) : '');
   const [description, setDescription] = useState(product.shortDescription || '');
+  const [officialStoreUrl, setOfficialStoreUrl] = useState(product.officialStoreUrl || '');
   const [imageSlots, setImageSlots] = useState<{ id: string; url: string; file?: File }[]>(() => {
     const urls = product.gallery && product.gallery.length > 0 ? product.gallery : (product.image ? [product.image] : []);
     return urls.map((u, i) => ({ id: `existing-${i}`, url: u }));
@@ -155,6 +156,7 @@ export const ProductQuickEditModal: React.FC<ProductQuickEditModalProps> = ({
       image: imageUrl,
       gallery: finalUrls.length > 0 ? finalUrls : null,
       short_description: description || null,
+      official_store_url: officialStoreUrl || null,
       is_new: isNew,
       is_best: isBest,
       specs: specsPayload,
@@ -193,6 +195,7 @@ export const ProductQuickEditModal: React.FC<ProductQuickEditModalProps> = ({
       image: imageUrl || product.image,
       gallery: finalUrls.length > 0 ? finalUrls : product.gallery,
       shortDescription: description,
+      officialStoreUrl: officialStoreUrl || product.officialStoreUrl,
       isNew,
       isBest,
     });
@@ -285,6 +288,18 @@ export const ProductQuickEditModal: React.FC<ProductQuickEditModalProps> = ({
               rows={2}
               className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm text-neutral-900 focus:outline-none focus:border-blue-600 resize-none"
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="text-xs font-bold text-neutral-500 block mb-1.5">구매 페이지 링크</label>
+            <input
+              type="text"
+              value={officialStoreUrl}
+              onChange={(e) => setOfficialStoreUrl(e.target.value)}
+              placeholder="이 상품 가격이 보이는 정확한 판매 페이지 주소"
+              className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600"
+            />
+            <p className="text-[10px] text-neutral-400 mt-1">비워두면 브랜드 공식몰 첫 페이지로 연결돼요</p>
           </div>
 
           <div className="mb-4">

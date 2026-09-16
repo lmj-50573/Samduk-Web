@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ShoeProduct, NavSection } from '../../types';
 import { PRODUCTS_DATA } from '../../data/samdukData';
-import { Eye, Heart, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, Heart, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ScrollReveal } from '../common/ScrollReveal';
 
 interface NewArrivalsProps {
@@ -9,6 +9,7 @@ interface NewArrivalsProps {
   onNavigate: (section: NavSection) => void;
   wishlist: string[];
   onToggleWishlist: (productId: string) => void;
+  products?: ShoeProduct[];
 }
 
 export const NewArrivals: React.FC<NewArrivalsProps> = ({
@@ -16,8 +17,19 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({
   onNavigate,
   wishlist,
   onToggleWishlist,
+  products = PRODUCTS_DATA,
 }) => {
-  const newProducts = PRODUCTS_DATA.filter((p) => p.isNew).slice(0, 4);
+  const newProducts = products.filter((p) => p.isNew).slice(0, 10);
+
+  // 가로 스크롤 캐러셀: 화살표를 누르면 한 번에 카드 하나 반 정도씩 옆으로 스크롤됨
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollByCards = (direction: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const firstCard = el.firstElementChild as HTMLElement | null;
+    const cardWidth = firstCard ? firstCard.offsetWidth + 24 : 320; // 카드 너비 + gap-6(24px)만큼만 이동
+    el.scrollBy({ left: direction === 'left' ? -cardWidth : cardWidth, behavior: 'smooth' });
+  };
 
   // 액센트 선이 스크롤해서 보일 때 왼쪽에서 오른쪽으로 그려지는 효과를 위한 감지
   const accentLineRef = useRef<HTMLDivElement>(null);
@@ -72,8 +84,27 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({
           </div>
         </ScrollReveal>
 
-        {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 가로 스크롤 캐러셀: 카드가 옆으로 이어지고, 양옆 화살표나 직접 드래그로 넘길 수 있음 */}
+        <div className="relative">
+          <button
+            onClick={() => scrollByCards('left')}
+            className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-white border border-neutral-200 shadow-lg text-neutral-700 hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer"
+            aria-label="이전 상품 보기"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => scrollByCards('right')}
+            className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-11 h-11 items-center justify-center rounded-full bg-white border border-neutral-200 shadow-lg text-neutral-700 hover:bg-neutral-900 hover:text-white transition-colors cursor-pointer"
+            aria-label="다음 상품 보기"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none pb-2"
+          >
           {newProducts.map((product, idx) => {
             const isSaved = wishlist.includes(product.id);
             const discountPercent = product.originalPrice
@@ -81,7 +112,7 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({
               : 0;
 
             return (
-              <ScrollReveal key={product.id} delayMs={idx * 100}>
+              <ScrollReveal key={product.id} className="shrink-0 w-72 sm:w-80 snap-start" delayMs={idx * 100}>
               <div
                 className="group relative bg-white border border-neutral-200 hover:border-neutral-900 rounded-2xl overflow-hidden transition-all duration-300 flex flex-col justify-between shadow-sm hover:shadow-xl h-full"
               >
@@ -177,6 +208,7 @@ export const NewArrivals: React.FC<NewArrivalsProps> = ({
               </ScrollReveal>
             );
           })}
+          </div>
         </div>
       </div>
     </section>

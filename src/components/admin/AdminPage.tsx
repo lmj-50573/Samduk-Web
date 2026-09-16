@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Plus, Package, Upload, X, Trash2, Loader2, Pencil } from 'lucide-react';
+import { ShieldCheck, Plus, Package, Upload, X, Trash2, Loader2, Pencil, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -13,6 +13,7 @@ interface Product {
   original_price: number | null;
   image: string | null;
   short_description: string | null;
+  official_store_url: string | null;
   is_new: boolean;
   is_best: boolean;
   created_at: string;
@@ -71,6 +72,7 @@ export const AdminPage: React.FC = () => {
   const [price, setPrice] = useState('');
   const [originalPrice, setOriginalPrice] = useState('');
   const [description, setDescription] = useState('');
+  const [officialStoreUrl, setOfficialStoreUrl] = useState('');
   const [imageSlots, setImageSlots] = useState<{ id: string; url: string; file?: File }[]>([]);
   const [isNew, setIsNew] = useState(false);
   const [isBest, setIsBest] = useState(false);
@@ -89,6 +91,7 @@ export const AdminPage: React.FC = () => {
 
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     setLoadingList(true);
@@ -187,6 +190,7 @@ export const AdminPage: React.FC = () => {
     setPrice('');
     setOriginalPrice('');
     setDescription('');
+    setOfficialStoreUrl('');
     setImageSlots([]);
     setIsNew(false);
     setIsBest(false);
@@ -212,6 +216,7 @@ export const AdminPage: React.FC = () => {
     setPrice(String(p.price));
     setOriginalPrice(p.original_price ? String(p.original_price) : '');
     setDescription(p.short_description || '');
+    setOfficialStoreUrl(p.official_store_url || '');
     {
       const urls = p.gallery && p.gallery.length > 0 ? p.gallery : (p.image ? [p.image] : []);
       setImageSlots(urls.map((u, i) => ({ id: `existing-${i}`, url: u })));
@@ -296,6 +301,7 @@ export const AdminPage: React.FC = () => {
       image: imageUrl,
       gallery: finalUrls.length > 0 ? finalUrls : null,
       short_description: description || null,
+      official_store_url: officialStoreUrl || null,
       is_new: isNew,
       is_best: isBest,
       specs: {
@@ -335,10 +341,13 @@ export const AdminPage: React.FC = () => {
       }
     }
 
+    const wasEditing = !!editingId;
     resetForm();
     setShowForm(false);
     fetchProducts();
     setSubmitting(false);
+    setSuccessMessage(wasEditing ? '상품이 수정됐어요!' : '상품이 등록됐어요!');
+    setTimeout(() => setSuccessMessage(null), 3000);
   };
 
   const handleDelete = async (id: string) => {
@@ -347,6 +356,8 @@ export const AdminPage: React.FC = () => {
     const { error } = await supabase.from('products').delete().eq('id', id);
     if (!error) {
       fetchProducts();
+      setSuccessMessage('상품이 삭제됐어요.');
+      setTimeout(() => setSuccessMessage(null), 3000);
     }
   };
 
@@ -364,6 +375,14 @@ export const AdminPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
+      {/* 성공 알림 토스트 */}
+      {successMessage && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[200] px-5 py-3 bg-neutral-900 text-white text-sm font-bold rounded-xl shadow-2xl flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-blue-400" />
+          <span>{successMessage}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-neutral-950 text-white py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
@@ -581,6 +600,18 @@ export const AdminPage: React.FC = () => {
                 className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600 resize-none"
                 placeholder="상품에 대한 짧은 설명을 입력하세요"
               />
+            </div>
+
+            <div className="mb-4">
+              <label className="text-xs font-bold text-neutral-500 block mb-1.5">구매 페이지 링크</label>
+              <input
+                type="text"
+                value={officialStoreUrl}
+                onChange={(e) => setOfficialStoreUrl(e.target.value)}
+                placeholder="이 상품 가격이 보이는 정확한 판매 페이지 주소 (예: https://...)"
+                className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3 py-2.5 text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-blue-600"
+              />
+              <p className="text-[10px] text-neutral-400 mt-1">비워두면 브랜드 공식몰 첫 페이지로 연결돼요</p>
             </div>
 
             <div className="mb-4">

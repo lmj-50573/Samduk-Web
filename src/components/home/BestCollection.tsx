@@ -3,7 +3,14 @@ import { ShoeProduct, NavSection } from '../../types';
 import { PRODUCTS_DATA } from '../../data/samdukData';
 import { Eye, Heart, ArrowRight, Award, Check } from 'lucide-react';
 import { ScrollReveal } from '../common/ScrollReveal';
+import { supabase } from '../../lib/supabase';
 
+interface TaxonomyRow {
+  id: string;
+  value: string;
+  label: string;
+  sort_order: number;
+}
 
 interface BestCollectionProps {
   onOpenQuickView: (product: ShoeProduct) => void;
@@ -21,9 +28,33 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
   products = PRODUCTS_DATA,
 }) => {
     const bestProducts = products.filter((p) => p.isBest);
-    const [activeTab, setActiveTab] = useState<'ALL' | 'Safety' | 'Outdoor' | 'Running' | 'Lifestyle'>('ALL');
 
-    // 액센트 선이 스크롤해서 보일 때 왼쪽에서 오른쪽으로 그려지는 효과를 위한 감지
+    const [dbCategories, setDbCategories] = useState<TaxonomyRow[]>([]);
+    useEffect(() => {
+      const fetchCategories = async () => {
+        const { data } = await supabase
+          .from('categories')
+          .select('*')
+          .order('sort_order', { ascending: true });
+        if (data) setDbCategories(data as TaxonomyRow[]);
+      };
+      fetchCategories();
+    }, []);
+
+    // 이 섹션(베스트 컬렉션)에는 Kids 카테고리를 항상 안 보이게 함
+    // (해당 카테고리는 상품이 적어 탭이 비어 보이는 게 더 이상해서 제외.
+    // 나중에 다시 보이게 하려면, 아래 필터 조건을 지우면 됨)
+    // KIDS는 무조건 안 보이게 고정. 그 외 카테고리는 BEST 상품이 1개라도 있을 때만
+    // 탭에 나타남 (상품을 등록하고 BEST 체크만 해주면, 별도 코드 수정 없이 자동으로 탭이 생김)
+    const tabs = [
+      { value: 'ALL', label: 'ALL BEST' },
+      ...dbCategories
+        .filter((c) => c.value !== 'Kids')
+        .filter((c) => bestProducts.some((p) => p.category === c.value))
+        .map((c) => ({ value: c.value, label: c.value })),
+    ];
+    const [activeTab, setActiveTab] = useState<string>('ALL');
+
     const accentLineRef = useRef<HTMLDivElement>(null);
     const [isLineDrawn, setIsLineDrawn] = useState(false);
 
@@ -47,32 +78,36 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
         ? bestProducts.slice(0, 4)
         : bestProducts.filter(p => p.category === activeTab).slice(0, 4);
 
-    // 순서를 기억하는 state 추가
     const [customOrder, setCustomOrder] = useState<string[]>(filteredProducts.map(p => p.id));
 
-    // 탭이 바뀌면 순서 초기화
+    const filteredIdsKey = filteredProducts.map(p => p.id).join(',');
     useEffect(() => {
         setCustomOrder(filteredProducts.map(p => p.id));
-    }, [activeTab]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTab, filteredIdsKey]);
 
-    // customOrder 순서대로 실제 상품 배열 재구성
     const orderedProducts = customOrder
         .map(id => filteredProducts.find(p => p.id === id))
         .filter((p): p is ShoeProduct => p !== undefined);
 
-    const heroBest = orderedProducts[0] || bestProducts[0];
-    const sideBest = orderedProducts.slice(1, 4);
+    // 수정: 해당 카테고리에 BEST 상품이 없으면 다른 카테고리 상품으로 대체하지 않고
+    // 그냥 비워둠 (orderedProducts는 항상 filteredProducts의 부분집합이라, 카테고리
+    // 필터링과 무관하게 fallback되던 이전 로직의 버그를 제거함)
+    const heroBest = orderedProducts[0];
 
-    // 카드를 1번 자리로 올리는 함수
-    const handlePromoteToHero = (productId: string) => {
-        setCustomOrder((prev) => {
-            const idx = prev.indexOf(productId);
-            if (idx <= 0) return prev;
-            const newOrder = [...prev];
-            [newOrder[0], newOrder[idx]] = [newOrder[idx], newOrder[0]];
-            return newOrder;
-        });
-    };
+    // 왼쪽 배너: 특정 상품이 아니라, BEST 상품 사진들을 슬라이드로 자동 전환
+    const bannerSlides = orderedProducts.slice(0, 5);
+    const [bannerIdx, setBannerIdx] = useState(0);
+    useEffect(() => {
+      setBannerIdx(0);
+    }, [activeTab]);
+    useEffect(() => {
+      if (bannerSlides.length <= 1) return;
+      const timer = setInterval(() => {
+        setBannerIdx((i) => (i + 1) % bannerSlides.length);
+      }, 4000);
+      return () => clearInterval(timer);
+    }, [bannerSlides.length]);
 
   return (
     <section className="py-24 bg-neutral-100 text-neutral-900 border-b border-neutral-200">
@@ -99,188 +134,153 @@ export const BestCollection: React.FC<BestCollectionProps> = ({
 
             {/* Category Pill Tabs */}
             <div className="mt-6 md:mt-0 flex items-center gap-1.5 bg-neutral-200/80 p-1.5 rounded-xl overflow-x-auto scrollbar-none">
-              {(['ALL', 'Safety', 'Outdoor', 'Running', 'Lifestyle'] as const).map((tab) => (
+              {tabs.map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
                   className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer shrink-0 whitespace-nowrap ${
-                    activeTab === tab
+                    activeTab === tab.value
                       ? 'bg-neutral-900 text-white shadow-sm'
                       : 'text-neutral-600 hover:text-neutral-900'
                   }`}
                 >
-                  {tab === 'ALL' ? 'ALL BEST' : tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
           </div>
         </ScrollReveal>
 
-        {/* Asymmetrical Editorial Showcase (1 Hero Left + 3 Stack Right) */}
+        {/* 이 카테고리에 BEST 상품이 하나도 없을 때 보여줄 안내 문구 */}
+        {!heroBest && (
+          <div className="text-center py-16 bg-white rounded-3xl border border-neutral-200">
+            <Award className="w-10 h-10 text-neutral-300 mx-auto mb-3" />
+            <p className="text-sm font-bold text-neutral-500">
+              아직 이 카테고리엔 BEST로 등록된 상품이 없어요.
+            </p>
+            <p className="text-xs text-neutral-400 mt-1">
+              관리자 페이지에서 상품의 "BEST 배지"를 체크하면 여기에 나타나요.
+            </p>
+          </div>
+        )}
+
+        {/* Editorial Showcase: 왼쪽 배너 캐러셀(점 인디케이터) + 오른쪽 상품 3개 가로 배치 */}
+        {heroBest && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {heroBest && (
-            <ScrollReveal className="lg:col-span-7" delayMs={100}>
-            <div className="bg-white rounded-3xl overflow-hidden border border-neutral-200 flex flex-col justify-between shadow-md hover:shadow-2xl transition-all group relative h-full">
-              <div className="relative aspect-16/10 bg-neutral-950 overflow-hidden">
+
+          {/* 왼쪽: 점으로 넘기는 배너 이미지 (특정 상품 정보가 아니라 무드 비주얼) */}
+          <ScrollReveal className="lg:col-span-5" delayMs={100}>
+            <div className="relative rounded-3xl overflow-hidden bg-neutral-950 aspect-4/5 lg:aspect-auto lg:h-full min-h-[480px]">
+              {bannerSlides.map((slide, i) => (
                 <img
-                  src={heroBest.image}
-                  alt={heroBest.name}
+                  key={slide.id}
+                  src={slide.image}
+                  alt={slide.name}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                  className="absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out"
+                  style={{ opacity: i === bannerIdx ? 1 : 0 }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/80 via-transparent to-transparent" />
+              ))}
+              <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/85 via-neutral-950/10 to-transparent" />
 
-
-                {/* Wishlist Button */}
-                <button
-                  onClick={() => onToggleWishlist(heroBest.id)}
-                  className={`absolute top-5 right-5 p-3 rounded-full backdrop-blur-md transition-colors cursor-pointer shadow-lg ${
-                    wishlist.includes(heroBest.id)
-                      ? 'bg-red-500 text-white'
-                      : 'bg-white/90 text-neutral-800 hover:text-red-500'
-                  }`}
-                >
-                  <Heart className="w-5 h-5 fill-current" />
-                </button>
-
-                {/* Overlay specs info */}
-                <div className="absolute bottom-5 left-6 right-6 text-white">
-                  <div className="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-1 font-bold">
-                    <span>{heroBest.brand}</span>
-                    <span>·</span>
-                    <span>{heroBest.category}</span>
-                    
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight">
-                    {heroBest.name}
-                  </h3>
-                </div>
+              <div className="absolute bottom-8 left-6 right-6 text-white">
+                <span className="inline-block px-2.5 py-1 bg-blue-600 text-white text-[10px] font-mono font-bold uppercase rounded mb-3">
+                  BEST PICK
+                </span>
+                <h3 className="text-2xl font-black uppercase tracking-tight leading-tight">
+                  안전과 스타일,<br />둘 다 포기하지 않는 선택
+                </h3>
               </div>
 
-              {/* Bottom detail row */}
-              <div className="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white">
-                <div>
-                  <p className="text-sm font-bold text-neutral-800">
-                    {heroBest.nameKo}
-                  </p>
-                  <p className="text-xs text-neutral-500 mt-1 max-w-md line-clamp-2">
-                    {heroBest.shortDescription}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {heroBest.technologies.map((tech, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-0.5 bg-neutral-100 text-neutral-700 text-[11px] font-mono font-bold rounded"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex sm:flex-col items-center sm:items-end justify-between shrink-0 gap-2">
-                  <div className="text-right">
-                    <div className="text-2xl font-black font-mono text-neutral-900">
-                      ₩{heroBest.price.toLocaleString()}
-                    </div>
-                    {heroBest.originalPrice && (
-                      <div className="text-xs text-neutral-400 line-through font-mono">
-                        ₩{heroBest.originalPrice.toLocaleString()}
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => onOpenQuickView(heroBest)}
-                    className="px-5 py-3 bg-neutral-900 hover:bg-blue-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center space-x-2 cursor-pointer shadow-md"
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span>VIEW DETAILS</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            </ScrollReveal>
-          )}
-
-          {/* 3 Secondary Best Cards (5 cols) */}
-           <div className="lg:col-span-5 flex flex-col justify-start gap-4">
-            {sideBest.map((product, idx) => {
-              const isSaved = wishlist.includes(product.id);
-              return (
-                  <ScrollReveal key={product.id} delayMs={150 + idx * 100}>
-                  <div
-                      onClick={() => handlePromoteToHero(product.id)}
-                      className="group bg-white rounded-2xl p-4 border border-neutral-200 hover:border-blue-500 transition-all flex items-center space-x-4 shadow-sm hover:shadow-lg cursor-pointer"
-                  >
-                  {/* Thumbnail */}
-                  <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              {/* 점 인디케이터 */}
+              {bannerSlides.length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+                  {bannerSlides.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setBannerIdx(i)}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        i === bannerIdx ? 'w-6 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                      }`}
                     />
-                    <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-neutral-900 text-white font-mono text-[10px] font-bold rounded">
-                      #{idx + 2}
-                    </span>
-                  </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </ScrollReveal>
 
-                  {/* Info */}
-                  <div className="flex-1 min-w-0 space-y-1.5">
-                    <div className="text-[10px] font-mono font-bold text-blue-600 uppercase">
-                      {product.brand} · {product.category}
-                    </div>
-                    <h4 className="text-sm font-black uppercase text-neutral-900 truncate group-hover:text-blue-600 transition-colors">
-                      {product.name}
-                    </h4>
-                    <p className="text-xs text-neutral-500 truncate">
-                      {product.nameKo}
-                    </p>
-
-                          <div className="pt-2 flex items-center justify-between">
-                              <div>
-                                  <div className="font-mono text-sm font-black text-neutral-900">
-                                      ₩{product.price.toLocaleString()}
-                                  </div>
-                                  {product.originalPrice && product.originalPrice > product.price && (
-                                      <div className="font-mono text-[10px] text-neutral-400 line-through">
-                                          ₩{product.originalPrice.toLocaleString()}
-                                      </div>
-                                  )}
-                              </div>
-
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={(e) => {
+          {/* 오른쪽: 상품 3개 가로로 나란히 */}
+          <div className="lg:col-span-7 grid grid-cols-1 xl:grid-cols-3 gap-5">
+            {orderedProducts.slice(0, 3).map((product, idx) => {
+              const isSaved = wishlist.includes(product.id);
+              const discountPercent = product.originalPrice && product.originalPrice > product.price
+                ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+                : 0;
+              return (
+                <ScrollReveal key={product.id} className="self-center" delayMs={150 + idx * 100}>
+                  <div className="group bg-white rounded-2xl overflow-hidden border border-neutral-200 hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer flex flex-col">
+                    <div
+                      onClick={() => onOpenQuickView(product)}
+                      className="relative aspect-square bg-neutral-100 overflow-hidden"
+                    >
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <button
+                        onClick={(e) => {
                           e.stopPropagation();
                           onToggleWishlist(product.id);
-                           }}
-                          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                            isSaved ? 'text-red-500 bg-red-50' : 'text-neutral-400 hover:text-red-500'
-                          }`}
-                          title="위시리스트 추가"
-                        >
-                          <Heart className="w-4 h-4 fill-current" />
-                        </button>
-                        <button
-                                      onClick={(e) => {
-                                          e.stopPropagation();
-                                          onOpenQuickView(product);
-                                      }}
-                          className="px-3 py-1.5 bg-neutral-900 hover:bg-blue-600 text-white text-[11px] font-bold rounded-lg transition-colors cursor-pointer flex items-center space-x-1"
-                        >
-                          <span>QUICK VIEW</span>
-                        </button>
+                        }}
+                        className={`absolute top-3 right-3 p-2 rounded-full backdrop-blur-md transition-colors cursor-pointer ${
+                          isSaved ? 'bg-red-500 text-white' : 'bg-white/90 text-neutral-600 hover:text-red-500'
+                        }`}
+                      >
+                        <Heart className="w-3.5 h-3.5 fill-current" />
+                      </button>
+                    </div>
+
+                    <div className="p-5 min-h-[172px] flex flex-col justify-center">
+                      <div className="text-xs font-mono font-bold text-blue-600 uppercase mb-1.5">
+                        {product.brand} · {product.category}
                       </div>
+                      <h4 className="text-base font-black uppercase text-neutral-900 line-clamp-2 mb-3 leading-snug">
+                        {product.name}
+                      </h4>
+                      <div className="mt-1 flex items-baseline gap-2">
+                        {discountPercent > 0 && (
+                          <span className="text-base font-black text-blue-600">{discountPercent}%</span>
+                        )}
+                        <span className="text-base font-black font-mono text-neutral-900">
+                          ₩{product.price.toLocaleString()}
+                        </span>
+                      </div>
+                      {product.originalPrice && discountPercent > 0 && (
+                        <span className="text-xs font-mono text-neutral-400 line-through">
+                          ₩{product.originalPrice.toLocaleString()}
+                        </span>
+                      )}
                     </div>
                   </div>
-                </div>
-                  </ScrollReveal>
+                </ScrollReveal>
               );
             })}
+
+            {orderedProducts.length < 3 && Array.from({ length: 3 - orderedProducts.length }).map((_, i) => (
+              <div
+                key={`empty-${i}`}
+                className="flex items-center justify-center text-center p-6 bg-white rounded-2xl border border-dashed border-neutral-300 min-h-[220px]"
+              >
+                <p className="text-xs text-neutral-400">
+                  BEST 상품이 더 필요해요
+                </p>
+              </div>
+            ))}
           </div>
         </div>
+        )}
       </div>
     </section>
   );

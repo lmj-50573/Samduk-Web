@@ -69,7 +69,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems: { label: string; section: NavSection; subtitle?: string }[] = [
     { label: 'SHOP', section: 'SHOP', subtitle: '전체 제품 카탈로그' },
     { label: 'BRANDS', section: 'BRANDS', subtitle: '3대 파트너 브랜드' },
-    { label: 'STORY', section: 'STORY', subtitle: '제조 혁신과 헤리티지' },
     { label: 'NEWS', section: 'NEWS', subtitle: '최신 기업 소식' },
     { label: 'CONTACT', section: 'CONTACT', subtitle: '제휴 및 상담' },
   ];

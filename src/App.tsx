@@ -44,6 +44,7 @@ export default function App() {
 
   const [activeSection, setActiveSection] = useState<NavSection>('HOME');
   const [selectedBrandFilter, setSelectedBrandFilter] = useState<BrandId | 'ALL'>('ALL');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
 
   // Custom uploaded shoe photos state saved in localStorage
   const [customPhotos, setCustomPhotos] = useState<CustomShoePhoto[]>(() => {
@@ -225,6 +226,10 @@ export default function App() {
     setSelectedBrandFilter(brand);
   };
 
+  const handleSelectCategoryFilter = (category: string) => {
+    setSelectedCategoryFilter(category);
+  };
+
   const handleToggleWishlist = (productId: string) => {
     if (!currentUser) {
       setIsAuthModalOpen(true);
@@ -258,6 +263,7 @@ export default function App() {
             onOpenQuickView={(p) => setQuickViewProduct(p)}
             onNavigate={handleNavigate}
             onSelectBrandFilter={handleSelectBrandFilter}
+            onSelectCategoryFilter={handleSelectCategoryFilter}
             onOpenBrandStore={handleOpenBrandStore}
             onOpenNewsModal={(n) => setNewsModalItem(n)}
             wishlist={wishlist}
@@ -278,6 +284,7 @@ export default function App() {
         return (
           <ShopPage
             initialBrandFilter={selectedBrandFilter}
+            initialCategoryFilter={selectedCategoryFilter}
             products={products}
             onOpenQuickView={(p) => setQuickViewProduct(p)}
             wishlist={wishlist}
@@ -320,6 +327,7 @@ export default function App() {
             onOpenQuickView={(p) => setQuickViewProduct(p)}
             onNavigate={handleNavigate}
             onSelectBrandFilter={handleSelectBrandFilter}
+            onSelectCategoryFilter={handleSelectCategoryFilter}
             onOpenBrandStore={handleOpenBrandStore}
             onOpenNewsModal={(n) => setNewsModalItem(n)}
             wishlist={wishlist}
